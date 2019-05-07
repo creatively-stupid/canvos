@@ -83,7 +83,7 @@ loadImage("bliss.png");
 loadScript("html2canvas.min.js");
 loadScript("keyboard.min.js");
 
-loadApp("apps-builtin-calculator.json");
+loadApp("fs/apps/gui/builtin/notepad/app.json");
 loadApp("apps-builtin-settings.json");
 
 loadAllFiles(() => {
@@ -165,7 +165,7 @@ function frame(time) {
         ctx.fillText("Start Menu", size[0] * (1-startMenuScroll)-3*size[0]/4, 32);
 
         drawButton("Calculator", size[0] * (1-startMenuScroll-1)/2+5, 133, size[0]/2-10, 32, () => {
-            launchApp("apps-builtin-calculator.json", curmouse, lastmouse, time, deltatime, size);
+            launchApp("fs/apps/gui/builtin/notepad/app.json", curmouse, lastmouse, time, deltatime, size);
         }, curmouse, lastmouse);
         drawButton("Settings", size[0] * (1-startMenuScroll-1)/2+5, 168, size[0]/2-10, 32, () => {
             launchApp("apps-builtin-settings.json", curmouse, lastmouse, time, deltatime, size);

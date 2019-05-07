@@ -131,7 +131,7 @@ var r = (curmouse, lastmouse, time, deltatime, size, app, win) => {
   app.cur = cur;
 }
 var s = (curmouse, lastmouse, time, deltatime, size, app, win) => {
-  app.BigEval = new files["apps-builtin-calculator-bigeval.js"]();
+  app.BigEval = new files["fs/apps/gui/builtin/notepad/lib-bigeval.js"]();
   app.equ = "";
   app.cur = 0;
 }

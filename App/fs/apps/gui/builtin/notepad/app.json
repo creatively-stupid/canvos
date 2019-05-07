@@ -5,11 +5,11 @@
     "h": 300,
     "f": false,
     "m": false,
-    "i": "apps-builtin-calculator-icon.png",
+    "i": "icon.png",
     "n": "Calculator",
     "rs": false,
-    "s": "apps-builtin-calculator.js",
+    "s": "src.js",
     "d": [
-      2, "apps-builtin-calculator-bigeval.js"
+      2, "lib-bigeval.js"
     ]
   }
