@@ -1,0 +1,15 @@
+{
+    "x": 10,
+    "y": 10,
+    "w": 200,
+    "h": 300,
+    "f": false,
+    "m": false,
+    "i": "apps-builtin-calculator-icon.png",
+    "n": "Calculator",
+    "rs": false,
+    "s": "apps-builtin-calculator.js",
+    "d": [
+      2, "apps-builtin-calculator-bigeval.js"
+    ]
+  }

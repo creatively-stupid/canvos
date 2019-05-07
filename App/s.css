@@ -1,0 +1,67 @@
+* {
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  /*cursor: none;*/
+  color: #fff;
+  font-family: mono;
+}
+body {
+  background-color: #000;
+  height: 100vh;
+}
+button {
+  background-color: #222;
+  border: 1px solid #fff;
+  font-size: 2em;
+  padding: 0.25em 0.5em;
+  box-shadow: 0px 0px 0px #fff;
+  transition-duration: 100ms;
+  animation-duration: 200ms;
+  transition-timing-function: ease-out;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-out;
+}
+button:hover {
+  background-color: #333;
+  box-shadow: 0.3em 0.3em 0.1em #fff;
+}
+button:active {
+  animation-name: press;
+  background-color: #444;
+}
+@keyframes press {
+  0% {
+    background-color: #333;
+    box-shadow: 0.3em 0.3em 0.1em #fff;
+  }
+  50% {
+    background-color: #444;
+    box-shadow: 0.1em 0.1em 0.05em #fff;
+  }
+  100% {
+    background-color: #444;
+    box-shadow: 0.3em 0.3em 0.1em #fff;
+  }
+}
+h1 {
+  font-size: 4em;
+}
+@font-face {
+  font-family: seg;
+  src: url('fonts-DSEG_v045/DSEG7-Classic/DSEG7Classic-Regular.woff2'),
+    url('fonts-DSEG_v045/DSEG7-Classic/DSEG7Classic-Regular.woff'),
+    url('fonts-DSEG_v045/DSEG7-Classic/DSEG7Classic-Regular.ttf');
+}
+@font-face {
+  font-family: serf;
+  src: url('SourceSerifPro/SourceSerifPro-Regular.woff2'),
+    url('SourceSerifPro/SourceSerifPro-Regular.woff'),
+    url('SourceSerifPro/SourceSerifPro-Regular.ttf');
+}
+@font-face {
+  font-family: mono;
+  src: url('UbuntuMono/UbuntuMono-Regular.woff2'),
+    url('UbuntuMono/UbuntuMono-Regular.woff'),
+    url('UbuntuMono/UbuntuMono-Regular.ttf');
+}

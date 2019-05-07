@@ -1,0 +1,15 @@
+{
+    "x": 20,
+    "y": 20,
+    "w": 400,
+    "h": 300,
+    "f": false,
+    "m": false,
+    "i": "apps-builtin-settings-icon.png",
+    "n": "Settings",
+    "rs": false,
+    "s": "apps-builtin-settings.js",
+    "d": [
+      
+    ]
+  }

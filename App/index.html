@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>CanvOS 2</title>
+        <link href="./s.css" rel="stylesheet" type="text/css">
+        <script src="./j.js"></script>
+    </head>
+    <body>
+        <h1>CanvOS 2</h1>
+        <button id="launch">Launch CanvOS 2</button>
+<script>
+
+var win = undefined;
+var winex = false;
+var preservedData = {};
+
+function frame(time) {
+    if (win === undefined ||  win.location.href === "") {
+        win = undefined;
+        if (winex) {
+            openWin();
+        }
+    } else {
+        if (!winex) {
+            winex = true;
+            $("#launch").html("Close CanvOS 2");
+        }
+    }
+    if (window.relink) {
+        preservedData = window.link[1];
+        win = window.link[0];
+        window.relink = undefined;
+    }
+
+    requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+function openWin() {
+    win = open("app.html", "_blank", "width=800,height=600");
+    win.link = [window, preservedData];
+}
+
+function closeWin() {
+    win.close();
+    win = undefined;
+    $("#launch").html("Launch CanvOS 2");
+    winex = false;
+}
+
+$("#launch").on("click", () => {
+    if (win === undefined || win.location.href === "") {
+        openWin();
+    } else {
+        closeWin();
+    }
+});
+
+</script>
+    </body>
+</html>
