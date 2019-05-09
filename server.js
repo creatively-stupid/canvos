@@ -15,12 +15,13 @@ argvProperties = [
     [
         ["num", "-port", 80, false],
         ["bool", "-ip", false, false],
-        ["bool", "-ext", false, false]
+        ["bool", "-ext", false, false],
+        ["bool", "-noopen", false, false],
     ]
 ];
 argvs = parseArgvs(process.argv, argvProperties);
 
-//open("http://127.0.0.1:" + argvs["-port"].toString() + "/");
+if (!argvs["-noopen"]) open("http://localhost:" + argvs["-port"].toString() + "/index.html");
 
 if (argvs["-ip"]) {
     var ifaces = os.networkInterfaces();

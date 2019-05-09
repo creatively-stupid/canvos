@@ -162,7 +162,7 @@ function frame(time) {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         var date = new Date();
-        ctx.fillText(date.getHours() + ":" + date.getMinutes(), size[0] * (1-startMenuScroll)-size[0]/2, 32);
+        ctx.fillText(("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2), size[0] * (1-startMenuScroll)-size[0]/2, 32);
         ctx.font = "900 30px serf";
         ctx.fillText("Start Menu", size[0] * (1-startMenuScroll)-3*size[0]/4, 32);
 
@@ -1029,6 +1029,15 @@ document.addEventListener("fullscreenchange", function () {
     }
 }, false);
 //*/
+
+function launchModal(title, msg, img, btns) {
+    if (files["_tmodals"] === undefined) {
+        files["_tmodals"] = [];
+    }
+    files["_tmodals"].push({
+        
+    });
+}
 
 class Folder {
     constructor (contents) {
