@@ -18,3 +18,15 @@ then, from the `canvos/` directory, start Canvos by running `node server.js` wit
 - `-ip` - displays all external IPs, best used with `-ext`
 - `-ext` - allows external access, when not set, only localhost can access
 - `-noopen` - doesn't open web browser window
+
+## To-do list & Notes
+
+- add modal dialog
+
+- add apps
+-- media player
+-- settings
+-- terminal
+-- notepad
+
+- fix server open
