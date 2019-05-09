@@ -21,7 +21,10 @@ argvProperties = [
 ];
 argvs = parseArgvs(process.argv, argvProperties);
 
-if (!argvs["-noopen"]) open("http://localhost:" + argvs["-port"].toString() + "/index.html");
+if (!argvs["-noopen"]) {
+    open("http://localhost:" + argvs["-port"].toString() + "/index.html");
+    process.stdout.write("\nopened!");
+}
 
 if (argvs["-ip"]) {
     var ifaces = os.networkInterfaces();
