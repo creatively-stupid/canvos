@@ -21,8 +21,6 @@ then, from the `canvos/` directory, start Canvos by running `node server.js` wit
 
 ## To-do list & Notes
 
-- add modal dialog
-
 - add apps
 -- media player
 -- settings
