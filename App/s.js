@@ -31,6 +31,9 @@ String.prototype.removeAt = function(char) {
 String.prototype.insertAt=function(index, string) { 
     return this.substring(0, index) + string + this.substring(index);
 }
+Object.prototype.getKeyByValue=function(value) {
+    return Object.keys(this).find(key => this[key] === value);
+}
 
 function sSize() {
     var w = [
@@ -83,8 +86,7 @@ loadImage("bliss.png");
 loadScript("html2canvas.min.js");
 loadScript("keyboard.min.js");
 
-loadApp("fs/apps/gui/builtin/notepad/app.json");
-loadApp("apps-builtin-settings.json");
+loadApp("fs/apps/gui/builtin/notepad/");
 
 loadAllFiles(() => {
     Keyboard = files["keyboard.min.js"];
@@ -165,12 +167,8 @@ function frame(time) {
         ctx.fillText("Start Menu", size[0] * (1-startMenuScroll)-3*size[0]/4, 32);
 
         drawButton("Calculator", size[0] * (1-startMenuScroll-1)/2+5, 133, size[0]/2-10, 32, () => {
-            launchApp("fs/apps/gui/builtin/notepad/app.json", curmouse, lastmouse, time, deltatime, size);
+            launchApp("fs/apps/gui/builtin/notepad/", curmouse, lastmouse, time, deltatime, size);
         }, curmouse, lastmouse);
-        drawButton("Settings", size[0] * (1-startMenuScroll-1)/2+5, 168, size[0]/2-10, 32, () => {
-            launchApp("apps-builtin-settings.json", curmouse, lastmouse, time, deltatime, size);
-        }, curmouse, lastmouse);
-
         ctx.globalAlpha = 0.5;
         drawImage("startbar.png", 0, size[1] - 32, size[0], 32);
         ctx.fillStyle = (curmouse[2] && inBox(curmouse[0], curmouse[1], 2, size[1] - 30, 70, 28)) ? "#9f9fff" : "#7f7fff";
@@ -349,7 +347,7 @@ function loadScript(src) {
 }
 
 function loadApp(src) {
-    loadqueue.push([3, src]);
+    loadqueue.push([3, src + "app.json", src]);
     console.log(JSON.stringify(src) + " added to queue");
     log("queue-app", src);
     loadMax++;
@@ -399,14 +397,14 @@ async function loadAllFiles(callback) {
                     (t === 3)?()=>{
                         console.log("app");
                         log("load-app");
-                        files[src] = JSON.parse(txt);
-                        loadImage(files[src].i);
-                        loadScript(files[src].s);
-                        var deps = files[src].d;
+                        files[loadqueue[0][2]] = JSON.parse(txt);
+                        loadImage(loadqueue[0][2] + files[loadqueue[0][2]].i);
+                        loadScript(loadqueue[0][2] + files[loadqueue[0][2]].s);
+                        var deps = files[loadqueue[0][2]].d;
                         for (var i = 0; i < deps.length; i+=2) {
-                            loadqueue.push([deps[i], deps[i+1]]);
-                            console.log(JSON.stringify(deps[i+1]) + " added to queue");
-                            log("queue-app", deps[i+1]);
+                            loadqueue.push([deps[i], loadqueue[0][2] + deps[i+1]]);
+                            console.log(JSON.stringify(loadqueue[0][2] + deps[i+1]) + " added to queue");
+                            log("queue-app", loadqueue[0][2] + deps[i+1]);
                         }
                     }:
                 ()=>{})();
@@ -430,7 +428,8 @@ function launchApp(app, curmouse, lastmouse, time, deltatime, size) {
     apps[id].canvas.height = apps[id].h;
     apps[id].ctx = apps[id].canvas.getContext("2d");
     apps[id].wrs = 0;
-    files[apps[id].s].s(curmouse, lastmouse, time, deltatime, size, apps[id], {x: apps[id].x + 1, y: apps[id].y + 11, w: apps[id].w, h: apps[id].h});
+    apps[id]._path = app;
+    files[app + apps[id].s].s(curmouse, lastmouse, time, deltatime, size, apps[id], {x: apps[id].x + 1, y: apps[id].y + 11, w: apps[id].w, h: apps[id].h});
 }
 
 function processApps(cm, lm, pt, dt, sz) {
@@ -642,7 +641,7 @@ function processApps(cm, lm, pt, dt, sz) {
         images["temp-appgfx"] = app.canvas;
         app.top = i === appOrder.length - 1;
         app.hover = appCollidingWith(cm[0], cm[1]) === appOrder[i];
-        files[app.s].r(cm, lm, pt, dt, sz, app, {x: app.x + 1, y: app.y + 11, w: app.w, h: app.h});
+        files[app._path + app.s].r(cm, lm, pt, dt, sz, app, {x: app.x + 1, y: app.y + 11, w: app.w, h: app.h});
         drawImage("temp-appgfx", app.x+1, app.y+11, app.w, app.h)
         if (app.mx || app.ree || app.rew || app.ren || app.res) {
             ctx.lineWidth = 1;
@@ -690,7 +689,7 @@ function drawTray(cm, lm, pt, dt, sz) {
                 }
             }
         }
-        drawImage(app.i, startw+i*33, sz[1]-32, 32, 32);
+        drawImage(app._path + app.i, startw+i*33, sz[1]-32, 32, 32);
     }
 }
 

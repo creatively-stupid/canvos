@@ -124,8 +124,8 @@ var server = http.createServer(function (req, res) {
                         }
                         var i = filename.split(".");
                         var ext = fileExtensions[i[i.length - 1]]
-                        res.writeHead(200, { 'Content-Type': 'application/json' });
-                        res.write(JSON.stringify({"file": data.toString()}));
+                        res.writeHead(200, { 'Content-Type': ext ? ext : "application/octet-stream" });
+                        res.write(data);
                         res.end();
                     });
                 }
