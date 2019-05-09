@@ -47,13 +47,13 @@ console.olog=console.log;console.log=(...a)=>{console.olog(...a);consolelog+=a.j
 function log(command, data) {
     extconsolelog.push([command, data]);
 }
-/* /""""    __     . __    .     . /"""\ /"""-             /"""\
- * |         /    \    |/    |    \ /    |     | '---.                 _-'
- * \____ \__/\ |     |     V     \___/ -___/             /"___
+/* /""""  __   . __  .   . /"""\ /"""-       /"""\
+ * |     /  \  |/  |  \ /  |   | '---.         _-'
+ * \____ \__/\ |   |   V   \___/ -___/       /"___
  * 
- * /\"\"\"\"    __     . __    .     . /\"\"\"\\ /\"\"\"-             /\"\"\"\\
- * |         /    \\    |/    |    \\ /    |     | '---.                 _-'
- * \\____ \\__/\\ |     |     V     \\___/ -___/             /\"___
+ * /\"\"\"\"  __   . __  .   . /\"\"\"\\ /\"\"\"-       /\"\"\"\\
+ * |     /  \\  |/  |  \\ /  |   | '---.         _-'
+ * \\____ \\__/\\ |   |   V   \\___/ -___/       /\"___
  */
 
 
@@ -68,6 +68,8 @@ var loadqueue = [];
 var loadMax = 0;
 var Keyboard = {update: () => {}};
 
+var wallpaperloc = "fs/user/pictures/wallpaper0.jpg";
+
 loadImageData("startbar.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAgCAYAAADT5RIaAAAAmUlEQVR42g3EOwtBAQAF4OP9fv0li8FiMVgsFovBYjFYLAYShSIlSpESKUVK3cFyFyWLlOUuShYpy3G+4QNIwvb9EfbXR1lvwnF/Es6LRbjMhzJuhHt/JTzrM+Gdm4RvfFIDg/B3j6p1UI0dEahtVXVDBCsrVV6q0oIIFWeqMFX5CRHOjVR2SEQyfZXuqVSHiCbbKtEkYvE6/ztrS1y281jxAAAAAElFTkSuQmCC");
 loadImageData("button-close.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA7SURBVChTY2hoaPiPCwMBA1gBAwMDigSMD6Tt4SYgCSIrRChAl4TyiTQBi05UBbgwWAHYKyAGVsxgDwCrv3X99AYkdgAAAABJRU5ErkJggg==");
 loadImageData("button-close-pressed.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA4SURBVChTY/jPwPAfJwaTYIQqAeMDaXu4CUiCyAoRCqACcDaUT6QJWHSiKsCFIQpATBADK2awBwDvS2HVWMVr2AAAAABJRU5ErkJggg==");
@@ -81,7 +83,7 @@ loadImageData("button-move.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA
 loadImageData("button-move-pressed.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADJJREFUKFNj+M/A8B8nBpNQDgMSRhKzBytAFkTmU1EBTBCGkcQQCrBhiAIQE8TAihnsASkEXti78Kt3AAAAAElFTkSuQmCC");
 loadImageData("button-resize.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADVJREFUKFNjaGho+I8LAwEDWAEDAwNYAAttj9cEuAKYDiQJVAW4MIYJWGgiTAB7BcTAihnsAY5Od31I0YxzAAAAAElFTkSuQmCC");
 loadImageData("button-resize-pressed.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAC5JREFUKFNj+M/A8B8nBpNgBBHAQtuDFeDCcAUwHTBMvglYaGJMADFBDKyYwR4AhsJi1KlAOzcAAAAASUVORK5CYII=");
-loadImage("bliss.png");
+loadImage(wallpaperloc);
 
 loadScript("html2canvas.min.js");
 loadScript("keyboard.min.js");
@@ -130,24 +132,25 @@ function frame(time) {
             booted = true;
             console.log("Welcome To");
             console.log();
-            console.log("/\"\"\"\"    __     . __    .     . /\"\"\"\\ /\"\"\"-             /\"\"\"\\");
-            console.log("|         /    \\    |/    |    \\ /    |     | '---.                 _-'");
-            console.log("\\____ \\__/\\ |     |     V     \\___/ -___/             _\"___");
+            console.log("/\"\"\"\"  __   . __  .   . /\"\"\"\\ /\"\"\"-       /\"\"\"\\");
+            console.log("|     /  \\  |/  |  \\ /  |   | '---.         _-'");
+            console.log("\\____ \\__/\\ |   |   V   \\___/ -___/       /\"___");
             console.log();
             console.log("Copyright (C) 2019 RedMikePumpkin / CreativelyStupid");
             log("msg", "Welcome To");
             log("msg", "");
-            log("msg", "/\"\"\"\"    __     . __    .     . /\"\"\"\\ /\"\"\"-             /\"\"\"\\");
-            log("msg", "|         /    \\    |/    |    \\ /    |     | '---.                 _-'");
-            log("msg", "\\____ \\__/\\ |     |     V     \\___/ -___/             _\"___");
+            log("msg", "/\"\"\"\"  __   . __  .   . /\"\"\"\\ /\"\"\"-       /\"\"\"\\");
+            log("msg", "|     /  \\  |/  |  \\ /  |   | '---.         _-'");
+            log("msg", "\\____ \\__/\\ |   |   V   \\___/ -___/       /\"___");
             log("msg", "");
             log("msg", "Copyright (C) 2019 RedMikePumpkin / CreativelyStupid");
+            launchModal("CanvOS", "Welcome to CanvOS 2!", "", [["Ok", "close"]], 200, 50, curmouse, lastmouse, deltatime, size);
         }
-        var bgsize = imageRes("bliss.png");
+        var bgsize = imageRes(wallpaperloc);
         if (size[0] * bgsize[1] > size[1] * bgsize[0]) {
-            drawImage("bliss.png", 0, (size[1] - ((bgsize[1] * size[0]) / bgsize[0])) / 2, size[0], (bgsize[1] * size[0]) / bgsize[0]);
+            drawImage(wallpaperloc, 0, (size[1] - ((bgsize[1] * size[0]) / bgsize[0])) / 2, size[0], (bgsize[1] * size[0]) / bgsize[0]);
         } else {
-            drawImage("bliss.png", (size[0] - (bgsize[0] * size[1]) / bgsize[1]) / 2, 0, (bgsize[0] * size[1]) / bgsize[1], size[1]);
+            drawImage(wallpaperloc, (size[0] - (bgsize[0] * size[1]) / bgsize[1]) / 2, 0, (bgsize[0] * size[1]) / bgsize[1], size[1]);
         }
 
         processApps(curmouse, lastmouse, time, deltatime, size);
@@ -695,6 +698,7 @@ function drawTray(cm, lm, pt, dt, sz) {
 
 function appCollidingWith(x, y) {
     for (var i = appOrder.length-1; i >= 0; i--) {
+        if (!apps[appOrder[i]]) continue;
         if (inBox(x, y, apps[appOrder[i]].x, apps[appOrder[i]].y, apps[appOrder[i]].w+3, apps[appOrder[i]].h+13)) {
             return appOrder[i];
         }
@@ -751,6 +755,11 @@ function inBox(px, py, x, y, w, h) {
 function drawImage(i, x, y, w, h) {
     i = images[i];
     if (i) ctx.drawImage(i, x, y, w, h);
+}
+
+function drawGlobalImage(i, x, y, w, h, c) {
+    i = images[i];
+    if (i) c.drawImage(i, x, y, w, h);
 }
 
 function imageRes(i) {
@@ -1030,13 +1039,61 @@ document.addEventListener("fullscreenchange", function () {
 }, false);
 //*/
 
-function launchModal(title, msg, img, btns) {
-    if (files["_tmodals"] === undefined) {
-        files["_tmodals"] = [];
+function launchModal(title, msg, img, btns, w, h, cm, lm, t, dt, sz) {
+    var id = 0;
+    while(files["_tmodal_"+id] !== undefined) id++;
+    files["_tmodal"] = {
+        "x": (sSize()[0] - w) / 2,
+        "y": (sSize()[1] - h) / 2,
+        "w": w,
+        "h": h,
+        "f": false,
+        "m": false,
+        "i": img,
+        "n": title,
+        "rs": false,
+        "s": "_"+id,
+        "d": [],
+        "_msg": msg,
+        "_btns": btns
+    };
+    files["_tmodal_"+id] = {
+        r: (curmouse, lastmouse, time, deltatime, size, app, win) => {
+            app.ctx.fillStyle = "#000";
+            app.ctx.fillRect(0, 0, app.w, app.h);
+            drawGlobalImage(img, h / 4, h / 4, h / 2, h / 2, app.ctx);
+            app.ctx.font = "400 10px mono";
+            app.ctx.fillStyle = "#fff";
+            app.ctx.textBaseline = "bottom";
+            app.ctx.textAlign = "left";
+            var output = wrapText(app.ctx, app._msg, app.w - app.h - 1, 10);
+            for (var i = 0; i < output.text.length; i++) {
+              app.ctx.fillText(output.text[i].text, h + 1, output.text[i].height+1);
+            }
+            for (var i = 0; i < app._btns.length; i++) {
+                var ii = app._btns[i][1];
+                if (apps[appOrder[appOrder.length - 1]] !== app) {
+                    appOrder.push(apps.indexOf(app));
+                    appOrder.splice(appOrder.indexOf(apps.indexOf(app)), 1);
+                    console.log("del-ao-a");
+                    console.log("top");
+                }
+                drawGlobalButton(app, app._btns[i][0], h + 1 + i * (w - h - 2) / app._btns.length, h - 14, (w - h - 2) / app._btns.length, 12, () => {
+                    (
+                        (ii === "close")?()=>{
+                            var ind = apps.indexOf(app);
+                            apps.splice(ind, 1);
+                            console.log("close");
+                        }:
+                    ()=>{})();
+                }, curmouse, lastmouse);
+            }
+        },
+        s: (curmouse, lastmouse, time, deltatime, size, app, win) => {
+            
+        }
     }
-    files["_tmodals"].push({
-        
-    });
+    launchApp("_tmodal", cm, lm, t, dt, sz);
 }
 
 class Folder {
@@ -1071,6 +1128,22 @@ class Folder {
             }
         }
         return new Folder(newfold);
+    }
+    seek(path) {
+        var levels = path.split("/");
+        if (levels[levels.length - 1] === "") {
+            var f = this;
+            for (var i = 0; i < levels.length - 1; i++) {
+                f = f.getFile(levels[i]);
+            }
+            return f;
+        } else {d
+            var f = this;
+            for (var i = 0; i < levels.length; i++) {
+                f = f.getFile(levels[i]);
+            }
+            return f;
+        }
     }
 }
 

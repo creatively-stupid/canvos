@@ -1,5 +1,5 @@
 var r = (curmouse, lastmouse, time, deltatime, size, app, win) => {
-  app.ctx.font = "400 20px \"Courier New\", Courier, monospace";
+  app.ctx.font = "400 20px mono";
   app.ctx.fillStyle = "#fff";
   app.ctx.textBaseline = "bottom";
   app.ctx.textAlign = "left";
