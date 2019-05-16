@@ -169,7 +169,7 @@ function frame(time) {
         ctx.font = "900 30px serf";
         ctx.fillText("Start Menu", size[0] * (1-startMenuScroll)-3*size[0]/4, 32);
 
-        drawButton("Calculator", size[0] * (1-startMenuScroll-1)/2+5, 133, size[0]/2-10, 32, () => {
+        drawButton("Notepad", size[0] * (1-startMenuScroll-1)/2+5, 133, size[0]/2-10, 32, () => {
             launchApp("fs/apps/gui/builtin/notepad/", curmouse, lastmouse, time, deltatime, size);
         }, curmouse, lastmouse);
         ctx.globalAlpha = 0.5;

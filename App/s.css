@@ -44,6 +44,16 @@ button:active {
     box-shadow: 0.3em 0.3em 0.1em #fff;
   }
 }
+/*
+#c {
+  image-rendering: optimizeSpeed;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: -o-crisp-edges;
+  image-rendering: pixelated;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+*/
 h1 {
   font-size: 4em;
 }
