@@ -54,6 +54,12 @@ function log(command, data) {
  * /\"\"\"\"  __   . __  .   . /\"\"\"\\ /\"\"\"-       /\"\"\"\\
  * |     /  \\  |/  |  \\ /  |   | '---.         _-'
  * \\____ \\__/\\ |   |   V   \\___/ -___/       /\"___
+ * 
+ * FFFFF   U    U     CCCC     K   KK       U    U
+ * F       U    U    C    C    K KK         U    U
+ * FFFF    U    U    C         KK           U    U
+ * F       UU  UU    C    C    K KK         UU  UU
+ * F        UUUU      CCCC     K   KK        UUUU
  */
 
 
@@ -88,7 +94,7 @@ loadImage(wallpaperloc);
 loadScript("html2canvas.min.js");
 loadScript("keyboard.min.js");
 
-loadApp("fs/apps/gui/builtin/notepad/");
+loadAllShit();
 
 loadAllFiles(() => {
     Keyboard = files["keyboard.min.js"];
@@ -313,6 +319,7 @@ function drawGrid(size, textwidth) {
 
 var images = {};
 var files = {};
+var fs;
 
 function loadImage(src) {
     loadqueue.push([0, src]);
@@ -353,6 +360,12 @@ function loadApp(src) {
     loadqueue.push([3, src + "app.json", src]);
     console.log(JSON.stringify(src) + " added to queue");
     log("queue-app", src);
+    loadMax++;
+}
+function loadAllShit() {
+    loadqueue.push([4, "fs/?recurse"]);
+    console.log("loading the entire system so this will take a while");
+    log("queue-fs", "");
     loadMax++;
 }
 
@@ -409,6 +422,11 @@ async function loadAllFiles(callback) {
                             console.log(JSON.stringify(loadqueue[0][2] + deps[i+1]) + " added to queue");
                             log("queue-app", loadqueue[0][2] + deps[i+1]);
                         }
+                    }:
+                    (t === 4)?()=>{
+                        console.log("expand load completion");
+                        log("load-fs");
+                        fs = Folder.Folderify(JSON.parse(txt));
                     }:
                 ()=>{})();
                 loadqueue.shift();

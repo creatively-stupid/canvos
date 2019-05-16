@@ -299,7 +299,7 @@ function recurseFolder(folder) {
     fs.readdirSync(folder).forEach(file => {
         remaining++;
         out.folder[file] = true;
-        var stats = fs.statSync(folder + file + "/");
+        var stats = fs.statSync(folder + file);
         if (stats.isDirectory()) {
             out.folder[file] = recurseFolder(folder + file + "/");
         } else {
