@@ -22,9 +22,13 @@ then, from the `canvos/` directory, start Canvos by running `node server.js` wit
 ## To-do list & Notes
 
 - add apps
--- media player
--- settings
--- terminal
--- notepad
+
+  - media player
+
+  - settings
+
+  - terminal
+
+  - notepad
 
 - fix server open
