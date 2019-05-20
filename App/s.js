@@ -16,11 +16,11 @@ if (linking) {
 var canvas = document.getElementById("c");
 var ctx = canvas.getContext("2d");
 
-$(window).on("resize", () => {
+window.onresize = () => {
     var s = sSize();
     canvas.width = s[0];
     canvas.height = s[1];
-});
+};
 
 Number.prototype.clamp = function(min, max) {
     return Math.min(Math.max(this, min), max);
@@ -48,19 +48,13 @@ function log(command, data) {
     extconsolelog.push([command, data]);
 }
 /* /""""  __   . __  .   . /"""\ /"""-       /"""\
- * |     /  \  |/  |  \ /  |   | '---.         _-'
- * \____ \__/\ |   |   V   \___/ -___/       /"___
- * 
- * /\"\"\"\"  __   . __  .   . /\"\"\"\\ /\"\"\"-       /\"\"\"\\
- * |     /  \\  |/  |  \\ /  |   | '---.         _-'
- * \\____ \\__/\\ |   |   V   \\___/ -___/       /\"___
- * 
- * FFFFF   U    U     CCCC     K   KK       U    U
- * F       U    U    C    C    K KK         U    U
- * FFFF    U    U    C         KK           U    U
- * F       UU  UU    C    C    K KK         UU  UU
- * F        UUUU      CCCC     K   KK        UUUU
- */
+* |     /  \  |/  |  \ /  |   | '---.         _-'
+* \____ \__/\ |   |   V   \___/ -___/       /"___
+* 
+* /\"\"\"\"  __   . __  .   . /\"\"\"\\ /\"\"\"-       /\"\"\"\\
+* |     /  \\  |/  |  \\ /  |   | '---.         _-'
+* \\____ \\__/\\ |   |   V   \\___/ -___/       /\"___
+*/
 
 
 
@@ -98,6 +92,12 @@ loadAllShit();
 
 loadAllFiles(() => {
     Keyboard = files["keyboard.min.js"];
+    var loadedapps = fs.seek("apps/gui/builtin/");
+    var appnames = loadedapps.getFiles();
+    appnames.forEach((loadedapp) => {
+        loadApp("fs/apps/gui/builtin/" + loadedapp + "/");
+    });
+    loadAllFiles(() => {});
 });
 
 var startMenuScroll = 1;
@@ -208,15 +208,19 @@ function frame(time) {
         ctx.fillRect(0, 0, size[0], size[1]);
         ctx.fillStyle = "#fff";
         ctx.strokeStyle = "#000";
-        ctx.fillRect((size[0] - textwidth)/2, size[1]/2 - 50, textwidth, 100);
-        ctx.strokeRect((size[0] - textwidth)/2, size[1]/2 - 50, textwidth, 100);
+        ctx.fillRect((size[0] - textwidth)/2, size[1]/2 - 65, textwidth, 130);
+        ctx.strokeRect((size[0] - textwidth)/2, size[1]/2 - 65, textwidth, 130);
         ctx.fillStyle = "#000";
-        ctx.fillText("The system is coming up", size[0]/2, size[1]/2 - 30);
-        ctx.fillText(loadqueue.length.toString() + " file" + ((loadqueue.length!==1)?"s":"") + " remaining", size[0]/2, size[1]/2);
+        ctx.fillText("The system is coming up", size[0]/2, size[1]/2 - 45);
+        ctx.fillText(loadqueue.length.toString() + " file" + ((loadqueue.length!==1)?"s":"") + " remaining", size[0]/2, size[1]/2 - 15);
+        ctx.textBaseline = "middle";
+        ctx.font = "400 10px mono";
+        ctx.textAlign = "left";
+        ctx.fillText(loadqueue[0] !== undefined ? loadqueue[0][1] : "Done!", size[0]/2 - textwidth/2+7.5, size[1]/2 + 15);
         loadBarPosTo = (loadMax-loadqueue.length)/loadMax;
         loadBarPos = lerp(loadBarPos, loadBarPosTo, deltatime/0.3, 0, 1);
-        ctx.fillRect(size[0]/2 - textwidth/2+7.5, size[1]/2 + 15, (textwidth-15)*loadBarPos, 30);
-        ctx.strokeRect(size[0]/2 - textwidth/2+7.5, size[1]/2 + 15, textwidth-15, 30);
+        ctx.fillRect(size[0]/2 - textwidth/2+7.5, size[1]/2 + 30, (textwidth-15)*loadBarPos, 30);
+        ctx.strokeRect(size[0]/2 - textwidth/2+7.5, size[1]/2 + 30, textwidth-15, 30);
         drawGrid(size, textwidth);
     }
     if (displayconsole) {
@@ -308,13 +312,13 @@ function drawGrid(size, textwidth) {
     }
     var pat = ctx.createPattern(images["bootpattern"], null);
     ctx.fillStyle = pat;
-    ctx.fillRect(0, 0, size[0], size[1]/2-50);
-    ctx.fillRect(0, size[1]/2+50, size[0], size[1]/2-50);
-    ctx.fillRect(0, size[1]/2-50, (size[0]-textwidth)/2, 100);
-    ctx.fillRect((size[0]+textwidth)/2, size[1]/2-50, (size[0]-textwidth)/2, 100);
+    ctx.fillRect(0, 0, size[0], size[1]/2-65);
+    ctx.fillRect(0, size[1]/2+65, size[0], size[1]/2-65);
+    ctx.fillRect(0, size[1]/2-65, (size[0]-textwidth)/2, 130);
+    ctx.fillRect((size[0]+textwidth)/2, size[1]/2-65, (size[0]-textwidth)/2, 130);
     pat = ctx.createPattern(images["bootpattern2"], null);
     ctx.fillStyle = pat;
-    ctx.fillRect((size[0] - textwidth)/2, size[1]/2 - 50, textwidth, 100);
+    ctx.fillRect((size[0] - textwidth)/2, size[1]/2 - 65, textwidth, 130);
 }
 
 var images = {};
@@ -426,6 +430,7 @@ async function loadAllFiles(callback) {
                     (t === 4)?()=>{
                         console.log("expand load completion");
                         log("load-fs");
+                        console.log(JSON.parse(txt));
                         fs = Folder.Folderify(JSON.parse(txt));
                     }:
                 ()=>{})();
@@ -1077,6 +1082,8 @@ function launchModal(title, msg, img, btns, w, h, cm, lm, t, dt, sz) {
     };
     files["_tmodal_"+id] = {
         r: (curmouse, lastmouse, time, deltatime, size, app, win) => {
+            if (app.rs) app.rs = false;
+            if (app.m) app.m = false;
             app.ctx.fillStyle = "#000";
             app.ctx.fillRect(0, 0, app.w, app.h);
             drawGlobalImage(img, h / 4, h / 4, h / 2, h / 2, app.ctx);
@@ -1086,7 +1093,7 @@ function launchModal(title, msg, img, btns, w, h, cm, lm, t, dt, sz) {
             app.ctx.textAlign = "left";
             var output = wrapText(app.ctx, app._msg, app.w - app.h - 1, 10);
             for (var i = 0; i < output.text.length; i++) {
-              app.ctx.fillText(output.text[i].text, h + 1, output.text[i].height+1);
+            app.ctx.fillText(output.text[i].text, h + 1, output.text[i].height+1);
             }
             for (var i = 0; i < app._btns.length; i++) {
                 var ii = app._btns[i][1];
@@ -1155,7 +1162,7 @@ class Folder {
                 f = f.getFile(levels[i]);
             }
             return f;
-        } else {d
+        } else {
             var f = this;
             for (var i = 0; i < levels.length; i++) {
                 f = f.getFile(levels[i]);
@@ -1185,3 +1192,118 @@ class File {
 }
 
 $(window).trigger("resize");
+
+window.onerror = (m, s, l, c) => {
+    // BSOD
+    error(m, s, l, c);
+}
+
+async function delay(ms) {
+    return new Promise(yey => {
+        setTimeout(yey, ms);
+    })
+}
+
+async function error(m, s, l, c) {
+    setCursor("default");
+    window.onresize = null;
+    window.onkeydown = null;
+    window.onkeyup = null;
+    window.onmousedown = null;
+    window.onmouseenter = null;
+    window.onmouseup = null;
+    window.onmouseout = null;
+    window.onmousemove = null;
+    var size = sSize();
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, size[0], size[1]);
+    await delay(300);
+    var grd = ctx.createLinearGradient(0, 0, 0, size[1]);
+    grd.addColorStop(0, "#0ff");
+    grd.addColorStop(0.25, "#007fff");
+    grd.addColorStop(1, "#00f");
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, size[0], size[1]);
+    await delay(50);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillStyle = "#fff";
+    ctx.font = "400 200px mono";
+    ctx.fillText(":(", 30, size[1] - 440);
+    await delay(50);
+    ctx.font = "400 30px mono";
+    ctx.fillText("CanvOS has encountered an", 30, size[1] - 240);
+    await delay(50);
+    ctx.fillText("error and has stopped working", 30, size[1] - 210);
+    await delay(50);
+    ctx.fillText("please email the following error message to", 30, size[1] - 170);
+    await delay(50);
+    ctx.fillText("chickennuggetz420@gmail.com or michael@malinov.com", 30, size[1] - 140);
+    await delay(50);
+    var err = m + " @ " + decodeURIComponent(new URL(s).pathname).slice(1) + ":" + l + ":" + c;
+    ctx.font = "900 30px mono";
+    ctx.fillText(err, 30, size[1] - 110);
+    ctx.font = "400 30px mono";
+    await delay(50);
+    ctx.fillText("We will restart your system", 30, size[1] - 70);
+    await delay(50);
+    ctx.fillText("after a few quick scans /s", 30, size[1] - 40);
+    await delay(50);
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(500, size[1] - 70, 400, 30);
+    await delay(50);
+    var i = 0, c = 5;
+    while (1) {
+        ctx.fillStyle = grd;
+        ctx.fillRect(500, size[1] - 70, 400, 30);
+        ctx.strokeRect(500, size[1] - 70, 400, 30);
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(502, size[1] - 68, i+1, 26);
+        var d = 0;
+        if (i <= 400)
+            d += Math.random() * 15;
+        if (i <= 500)
+            d += Math.random() * 15;
+        if (i <= 600)
+            d += Math.random() * 15;
+        if (i <= 700)
+            d += Math.random() * 15;
+        if (i <= size[0] - 495) {
+            d += Math.random() * 15;
+            i++;
+            ctx.fillStyle = "#000";
+            var s = toFixed(Math.round(i/4)).toString();
+            ctx.fillText(s + "%", 503, size[1] - 70);
+        } else {
+            if (c < (size[0] - 500) / ctx.measureText("0").width + 2) c += 0.1;
+            ctx.fillStyle = "#000";
+            var s = randomLen(c);
+            ctx.fillText(s + "%", 503, size[1] - 70);
+        }
+        await delay(d);
+    }
+}
+
+function toFixed(x) {
+    if (Math.abs(x) < 1.0) {
+        var e = parseInt(x.toString().split('e-')[1]);
+        if (e) {
+            x *= Math.pow(10,e-1);
+            x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
+        }
+    } else {
+        var e = parseInt(x.toString().split('+')[1]);
+        if (e > 20) {
+            e -= 20;
+            x /= Math.pow(10,e);
+            x += (new Array(e+1)).join('0');
+        }
+    }
+    return x;
+}
+
+function randomLen(c) {
+    if (c < 2) return '';
+    return Math.floor(Math.random()*10).toString() + randomLen(c - 1);
+}
