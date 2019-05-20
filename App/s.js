@@ -178,7 +178,7 @@ function frame(time) {
         drawButton("Notepad", size[0] * (1-startMenuScroll-1)/2+5, 133, size[0]/2-10, 32, () => {
             launchApp("fs/apps/gui/builtin/notepad/", curmouse, lastmouse, time, deltatime, size);
         }, curmouse, lastmouse);
-        ctx.globalAlpha = 0.5;
+        ctx.globalAlpha = 1;
         drawImage("startbar.png", 0, size[1] - 32, size[0], 32);
         ctx.fillStyle = (curmouse[2] && inBox(curmouse[0], curmouse[1], 2, size[1] - 30, 70, 28)) ? "#9f9fff" : "#7f7fff";
         drawButton("Start", 2, size[1]-30, ctx.measureText("Start").width+5, 28, () => {
@@ -520,86 +520,88 @@ function processApps(cm, lm, pt, dt, sz) {
         }
         if (cm[2]) {
             if (appCollidingWith(cm[0], cm[1]) === appOrder[i]) {
-                if (inBox(cm[0], cm[1], app.x + app.w - 7, app.y + 1, 8, 8)) drawImage("button-close-pressed.png", app.x + app.w - 6, app.y + 1, 8, 8);
+                if (inBox(cm[0], cm[1], app.x + app.w - 7, app.y + 1, 8, 8)) drawImage("button-close-pressed.png", app.x + app.w - 7, app.y + 1, 8, 8);
                 else drawImage("button-close.png", app.x + app.w - 7, app.y + 1, 8, 8);
-                if (inBox(cm[0], cm[1], app.x + app.w - 16, app.y + 1, 8, 8)) drawImage("button-fullwin-pressed.png", app.x + app.w - 15, app.y + 1, 8, 8);
-                else drawImage("button-fullwin.png", app.x + app.w - 16, app.y + 1, 8, 8);
-                if (inBox(cm[0], cm[1], app.x + app.w - 25, app.y + 1, 8, 8)) drawImage("button-minimize-pressed.png", app.x + app.w - 24, app.y + 1, 8, 8);
+                if (inBox(cm[0], cm[1], app.x + app.w - 16, app.y + 1, 8, 8)) drawImage("button-" + (app.f ? "un" : "") + "fullwin-pressed.png", app.x + app.w - 16, app.y + 1, 8, 8);
+                else drawImage("button-" + (app.f ? "un" : "") + "fullwin.png", app.x + app.w - 16, app.y + 1, 8, 8);
+                if (inBox(cm[0], cm[1], app.x + app.w - 25, app.y + 1, 8, 8)) drawImage("button-minimize-pressed.png", app.x + app.w - 25, app.y + 1, 8, 8);
                 else drawImage("button-minimize.png", app.x + app.w - 25, app.y + 1, 8, 8);
                 if (inBox(cm[0], cm[1], app.x + app.w - 43, app.y + 1, 8, 8)) {
-                    if (!lm[2]) {
+                    if (!lm[2] && !app.f) {
                         app.rs = !app.rs;
                     }
                 }
                 if (inBox(cm[0], cm[1], app.x + app.w - 34, app.y + 1, 8, 8)) {
                     drawImage("button-move-pressed.png", app.x + app.w - 34, app.y + 1, 8, 8);
-                    if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren) {
+                    if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren && !app.f) {
                         app.mx=cm[0]-app.x;app.my=cm[1]-app.y;
                     }
                 }
                 else drawImage("button-move.png", app.x + app.w - 34, app.y + 1, 8, 8);
                 if (app.rs) {
                     if (inBox(cm[0], cm[1], app.x + app.w, app.y, 2, app.h+13)) {
-                        if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren) {
+                        if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren && !app.f) {
                             app.ree=cm[0]-app.x;
                         }
                     }
                     if (inBox(cm[0], cm[1], app.x, app.y, 2, app.h+13)) {
-                        if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren) {
+                        if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren && !app.f) {
                             app.rew=cm[0]-app.x;
                         }
                     }
                     if (inBox(cm[0], cm[1], app.x, app.y + app.h + 11, app.w + 3, 2)) {
-                        if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren) {
+                        if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren && !app.f) {
                             app.res=cm[1]-app.y;
                         }
                     }
                     if (inBox(cm[0], cm[1], app.x, app.y, app.w + 3, 2)) {
-                        if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren) {
+                        if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren && !app.f) {
                             app.ren=cm[1]-app.y;
                         }
                     }
                 }
             } else {
                 drawImage("button-close.png", app.x + app.w - 7, app.y + 1, 8, 8);
-                drawImage("button-fullwin.png", app.x + app.w - 16, app.y + 1, 8, 8);
+                drawImage("button-" + (app.f ? "un" : "") + "fullwin.png", app.x + app.w - 16, app.y + 1, 8, 8);
                 drawImage("button-minimize.png", app.x + app.w - 25, app.y + 1, 8, 8);
                 drawImage("button-move.png", app.x + app.w - 34, app.y + 1, 8, 8);
             }
-            if (app.mx) {
-                app.nx = cm[0]-app.mx;
-                app.ny = cm[1]-app.my;
-                app.nw = app.w;
-                app.nh = app.h;
-                currentCursor = "drag";
-            }
-            if (app.ree) {
-                app.nx = app.x;
-                app.ny = app.y;
-                app.nw = cm[0]-app.ree+app.w-app.x;
-                app.nh = app.h;
-                currentCursor = "drag-ew";
-            }
-            if (app.rew) {
-                app.nx = cm[0]-app.rew;
-                app.ny = app.y;
-                app.nw = app.x+app.w-app.nx;
-                app.nh = app.h;
-                currentCursor = "drag-ew";
-            }
-            if (app.res) {
-                app.nx = app.x;
-                app.ny = app.y;
-                app.nw = app.w;
-                app.nh = cm[1]-app.res+app.h-app.y;
-                currentCursor = "drag-ns";
-            }
-            if (app.ren) {
-                app.nx = app.x;
-                app.ny = cm[1]-app.ren;
-                app.nw = app.w;
-                app.nh = app.y+app.h-app.ny;
-                currentCursor = "drag-ns";
+            if (!app.f) {
+                if (app.mx) {
+                    app.nx = cm[0]-app.mx;
+                    app.ny = cm[1]-app.my;
+                    app.nw = app.w;
+                    app.nh = app.h;
+                    currentCursor = "drag";
+                }
+                if (app.ree) {
+                    app.nx = app.x;
+                    app.ny = app.y;
+                    app.nw = cm[0]-app.ree+app.w-app.x;
+                    app.nh = app.h;
+                    currentCursor = "drag-ew";
+                }
+                if (app.rew) {
+                    app.nx = cm[0]-app.rew;
+                    app.ny = app.y;
+                    app.nw = app.x+app.w-app.nx;
+                    app.nh = app.h;
+                    currentCursor = "drag-ew";
+                }
+                if (app.res) {
+                    app.nx = app.x;
+                    app.ny = app.y;
+                    app.nw = app.w;
+                    app.nh = cm[1]-app.res+app.h-app.y;
+                    currentCursor = "drag-ns";
+                }
+                if (app.ren) {
+                    app.nx = app.x;
+                    app.ny = cm[1]-app.ren;
+                    app.nw = app.w;
+                    app.nh = app.y+app.h-app.ny;
+                    currentCursor = "drag-ns";
+                }
             }
             if (!lm[2] && i !== appOrder.length - 1 && appCollidingWith(cm[0], cm[1]) === appOrder[i]) {
                 appOrder.push(appOrder[i]);
@@ -609,7 +611,7 @@ function processApps(cm, lm, pt, dt, sz) {
             }
         } else {
             drawImage("button-close.png", app.x + app.w - 7, app.y + 1, 8, 8);
-            drawImage("button-fullwin.png", app.x + app.w - 16, app.y + 1, 8, 8);
+            drawImage("button-" + (app.f ? "un" : "") + "fullwin.png", app.x + app.w - 16, app.y + 1, 8, 8);
             drawImage("button-minimize.png", app.x + app.w - 25, app.y + 1, 8, 8);
             drawImage("button-move.png", app.x + app.w - 34, app.y + 1, 8, 8);
             if (lm[2] && appCollidingWith(cm[0], cm[1]) === appOrder[i] && !app.rs && app.wrs === 0) {
@@ -620,7 +622,18 @@ function processApps(cm, lm, pt, dt, sz) {
                     continue;
                 }
                 if (inBox(cm[0], cm[1], app.x + app.w - 16, app.y + 1, 8, 8)) {
-                    
+                    app.f = !app.f;
+                    if (app.f) {
+                        app.fpx = app.x;
+                        app.fpy = app.y;
+                        app.fpw = app.w;
+                        app.fph = app.h;
+                    } else {
+                        app.x = app.fpx;
+                        app.y = app.fpy;
+                        app.w = app.fpw;
+                        app.h = app.fph;
+                    }
                 }
                 if (inBox(cm[0], cm[1], app.x + app.w - 25, app.y + 1, 8, 8)) {
                     app.m = true;
@@ -653,6 +666,14 @@ function processApps(cm, lm, pt, dt, sz) {
                 app.wrs = 2;
             }
         }
+        if (app.f) {
+            app.x = 0;
+            app.y = 0;
+            app.w = sz[0] - 3;
+            app.h = sz[1] - 46;
+        }
+        app.canvas.width = app.w;
+        app.canvas.height = app.h;
         if (app.wrs > 0) app.wrs--;
         if (app.rs) drawImage("button-resize-pressed.png", app.x + app.w - 43, app.y + 1, 8, 8);
         else drawImage("button-resize.png", app.x + app.w - 43, app.y + 1, 8, 8);
