@@ -111,6 +111,8 @@ var lastTime = 0;
 var apps = [];
 var appOrder = [];
 
+var running = true;
+
 function frame(time) {
     if (linking) {
         if (window.link === undefined) { // app reloaded and lost connection
@@ -235,7 +237,7 @@ function frame(time) {
     }
     updateMouse();
     Keyboard.update();
-    requestAnimationFrame(frame);
+    if (running) requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 

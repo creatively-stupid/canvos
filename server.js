@@ -40,10 +40,10 @@ if (argvs["-ip"]) {
 
             if (alias >= 1) {
                 // this single interface has multiple ipv4 addresses
-                process.stdout.write("\n" + ifname + ':' + alias + ": " + iface.address);
+                process.stdout.write("\non " + ifname + ':' + alias + ": http://" + iface.address + ":" + argvs["-port"] + "/index.html");
             } else {
                 // this interface has only one ipv4 adress
-                process.stdout.write("\n" + ifname + ': ' + iface.address);
+                process.stdout.write("\non " + ifname + ': http://' + iface.address + ":" + argvs["-port"] + "/index.html");
             }
             ++alias;
         });
