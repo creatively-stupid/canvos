@@ -88,7 +88,7 @@ var server = http.createServer(function (req, res) {
             var data = JSON.parse(Buffer.concat(body).toString()),
                 request = data.request;
             data = data.data;
-            
+
         });
     } else if (req.method === "GET") {
         fs.stat(filename, function (err, stats) {
@@ -163,7 +163,7 @@ var stdin = process.openStdin();
 
 var handleData = function(d) {
     var str = d.toString().trim();
-    
+
 };
 
 stdin.addListener("data", handleData);

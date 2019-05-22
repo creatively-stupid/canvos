@@ -28,7 +28,7 @@ Number.prototype.clamp = function(min, max) {
 String.prototype.removeAt = function(char) {
     return this.slice(0, char) + this.slice(char + 1);
 };
-String.prototype.insertAt=function(index, string) { 
+String.prototype.insertAt=function(index, string) {
     return this.substring(0, index) + string + this.substring(index);
 }
 Object.prototype.getKeyByValue=function(value) {
@@ -50,7 +50,7 @@ function log(command, data) {
 /* /""""  __   . __  .   . /"""\ /"""-       /"""\
 * |     /  \  |/  |  \ /  |   | '---.         _-'
 * \____ \__/\ |   |   V   \___/ -___/       /"___
-* 
+*
 * /\"\"\"\"  __   . __  .   . /\"\"\"\\ /\"\"\"-       /\"\"\"\\
 * |     /  \\  |/  |  \\ /  |   | '---.         _-'
 * \\____ \\__/\\ |   |   V   \\___/ -___/       /\"___
@@ -841,7 +841,7 @@ document.addEventListener('mouseenter', onMouseUpdate, false);
 document.addEventListener('mouseout', onMouseOut, false);
 document.addEventListener('mousedown', onMouseUpdate, false);
 document.addEventListener('mouseup', onMouseUpdate, false);
-        
+
 function onMouseUpdate(e) {
     e.preventDefault();
     _mousestate[0] = e.pageX;
@@ -976,7 +976,7 @@ function wrapText(ctx, text, width, fontSize) {
         lineTest = '',
         words = text.split(''),
         currentY = 0;
-        
+
     for (var i = 0, len = words.length; i < len; i++) {
         lineTest = line + words[i];
         if (words[i] === "\n") {
@@ -985,7 +985,7 @@ function wrapText(ctx, text, width, fontSize) {
             line = "";
             continue;
         }
-        
+
         // Check total width of line or last word
         if (ctx.measureText(lineTest).width > width) {
             // Calculate the new height
@@ -998,13 +998,13 @@ function wrapText(ctx, text, width, fontSize) {
             line = lineTest;
         }
     }
-    
+
     // Catch last line in-case something is left over
     if (line.length > 0) {
         currentY = lines.length * fontSize + fontSize;
         lines.push({ text: line.trim(), height: currentY });
     }
-    
+
     return {text: lines, height: currentY};
 }
 
@@ -1015,7 +1015,7 @@ function getCursorPos(ctx, text, char, pos, width, fontSize) {
         lineTest = '',
         words = text.split(''),
         currentY = 0;
-        
+
     for (var i = 0, len = words.length; i < len; i++) {
         lineTest = line + words[i];
         if (words[i] === "\n") {
@@ -1024,7 +1024,7 @@ function getCursorPos(ctx, text, char, pos, width, fontSize) {
             line = "";
             continue;
         }
-        
+
         // Check total width of line or last word
         if (ctx.measureText(lineTest).width > width) {
             // Calculate the new height
@@ -1040,13 +1040,13 @@ function getCursorPos(ctx, text, char, pos, width, fontSize) {
             return {line: lines.length-1, char: line.length-1};
         }
     }
-    
+
     // Catch last line in-case something is left over
     if (line.length > 0) {
         currentY = lines.length * fontSize + fontSize;
         lines.push({ text: line.trim(), height: currentY });
     }
-    
+
     alert("major error induced \"my code sucks\"");
 }
 
@@ -1138,7 +1138,7 @@ function launchModal(title, msg, img, btns, w, h, cm, lm, t, dt, sz) {
             }
         },
         s: (curmouse, lastmouse, time, deltatime, size, app, win) => {
-            
+
         }
     }
     launchApp("_tmodal", cm, lm, t, dt, sz);
