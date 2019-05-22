@@ -14,7 +14,7 @@ git clone git@github.com:creatively-stupid/canvos.git
 
 then, from the `canvos/` directory, start Canvos by running `node server.js` with some parameters:
 
-- `-port <Number>` - set the port, default 80 (use `sudo`) if port is under 1024
+- `-port <Number>` - set the port, default 80 (use `sudo` if port is under 1024)
 - `-ip` - displays all external IPs, best used with `-ext`
 - `-ext` - allows external access, when not set, only localhost can access
 - `-noopen` - doesn't open web browser window
@@ -22,9 +22,13 @@ then, from the `canvos/` directory, start Canvos by running `node server.js` wit
 ## To-do list & Notes
 
 - add apps
--- media player
--- settings
--- terminal
--- notepad
+
+  - media player
+
+  - settings
+
+  - terminal
+
+  - notepad
 
 - fix server open
