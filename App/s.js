@@ -970,7 +970,7 @@ function drawCursor(cm, lm) {
     }
 }
 
-function wrapText(ctx, text, width, fontSize) {
+function wrapText(ctx, text, width, fontSize, soft) {
     var lines = [],
         line = '',
         lineTest = '',
@@ -1002,7 +1002,7 @@ function wrapText(ctx, text, width, fontSize) {
     // Catch last line in-case something is left over
     if (line.length > 0) {
         currentY = lines.length * fontSize + fontSize;
-        lines.push({ text: line.trim(), height: currentY });
+        lines.push({ text: line, height: currentY });
     }
 
     return {text: lines, height: currentY};
@@ -1044,7 +1044,7 @@ function getCursorPos(ctx, text, char, pos, width, fontSize) {
     // Catch last line in-case something is left over
     if (line.length > 0) {
         currentY = lines.length * fontSize + fontSize;
-        lines.push({ text: line.trim(), height: currentY });
+        lines.push({ text: line, height: currentY });
     }
 
     alert("major error induced \"my code sucks\"");
