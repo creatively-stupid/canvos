@@ -1237,6 +1237,7 @@ async function error(m, s, l, c) {
     window.onmouseup = null;
     window.onmouseout = null;
     window.onmousemove = null;
+    running = false;
     var size = sSize();
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, size[0], size[1]);
