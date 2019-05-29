@@ -74,7 +74,7 @@ var r = (curmouse, lastmouse, time, deltatime, size, app, win) => {
                 app.size = Math.round(app.size * 1.25);
             }
             if (Keyboard.getDown("Digit0")) {
-                app.size = Math.round(app.size * 1.25);
+                app.size = 20;
             }
         } else {
             if (Keyboard.caps() ? !shift : shift) {
@@ -126,8 +126,8 @@ var r = (curmouse, lastmouse, time, deltatime, size, app, win) => {
     app.data = data;
     app.cur = cur;
     app.ctx.fillStyle = "#000";
-    app.ctx.font = "400 20px mono";
-    app.ctx.fillRect(0, app.h - 20, app.ctx.measureText(app.size.toString()).width, 20);
+    app.ctx.font = "400 10px mono";
+    app.ctx.fillRect(0, app.h - 10, app.ctx.measureText(app.size.toString()).width, 10);
     app.ctx.fillStyle = "#fff";
     app.ctx.fillText(app.size.toString(), 0, app.h);
 }

@@ -971,7 +971,7 @@ function drawCursor(cm, lm) {
     }
 }
 
-function wrapText(ctx, text, width, fontSize) {
+function wrapText(ctx, text, width, fontSize, soft) {
     var lines = [],
         line = '',
         lineTest = '',
@@ -1003,7 +1003,7 @@ function wrapText(ctx, text, width, fontSize) {
     // Catch last line in-case something is left over
     if (line.length > 0) {
         currentY = lines.length * fontSize + fontSize;
-        lines.push({ text: line.trim(), height: currentY });
+        lines.push({ text: line, height: currentY });
     }
 
     return {text: lines, height: currentY};
@@ -1045,7 +1045,7 @@ function getCursorPos(ctx, text, char, pos, width, fontSize) {
     // Catch last line in-case something is left over
     if (line.length > 0) {
         currentY = lines.length * fontSize + fontSize;
-        lines.push({ text: line.trim(), height: currentY });
+        lines.push({ text: line, height: currentY });
     }
 
     alert("major error induced \"my code sucks\"");
@@ -1238,6 +1238,7 @@ async function error(m, s, l, c) {
     window.onmouseup = null;
     window.onmouseout = null;
     window.onmousemove = null;
+    running = false;
     var size = sSize();
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, size[0], size[1]);
