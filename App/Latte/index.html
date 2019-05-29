@@ -5,6 +5,7 @@
     <title>Latte</title>
     <script src="./tokenize.js"></script>
     <script src="./nestify.js"></script>
+    <script src="./execute.js"></script>
   </head>
   <body>
     <div class="content-area">
@@ -32,7 +33,9 @@
         document.getElementById("out").innerText = JSON.stringify(o);
       };
       document.getElementById("execute").onclick = () => {
-
+        var o
+        console.log(o = execute(nestify(tokenize(document.getElementById("code").value))));
+        document.getElementById("out").innerText = JSON.stringify(o);
       };
     </script>
   </body>

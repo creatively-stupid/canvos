@@ -8,9 +8,15 @@ function nestify(tokens) {
     return seek(obj[arr[0]].inside, arr.slice(1));
   };
   var currentObj = () => seek(nestObj, nestIds);
+  var commenting = 0;
   for (var i = 0, len = tokens.length; i < len; i++) {
     var token = tokens[i][0];
     var tokenType = tokens[i][1];
+    if (commenting === 1) {
+
+    } else if (commenting === 2) {
+
+    }
     if (token === "\\") {
       i++;
       if (["\"", "'"].indexOf(nest[nest.length - 1]) === -1) {
