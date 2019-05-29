@@ -460,7 +460,6 @@ function launchApp(app, curmouse, lastmouse, time, deltatime, size) {
     apps[id]._path = app;
     files[app + apps[id].s].s(curmouse, lastmouse, time, deltatime, size, apps[id], {x: apps[id].x + 1, y: apps[id].y + 11, w: apps[id].w, h: apps[id].h});
 }
-
 function processApps(cm, lm, pt, dt, sz) {
     for (var i = 0; i < appOrder.length; i++) {
         var app = apps[appOrder[i]];
@@ -469,8 +468,9 @@ function processApps(cm, lm, pt, dt, sz) {
                 continue;
         }
         if (app.m) continue; // app is minimized
-        ctx.strokeStyle = "#7f7f9f";
-        ctx.strokeRect(app.x, app.y, app.w + 3, app.h + 13);
+        if (appObstructionState(i) & 4) continue; // app is obstructed
+        ctx.fillStyle = "#7f7f9f";
+        ctx.fillRect(app.x, app.y, app.w + 3, app.h + 13);
         ctx.strokeStyle = ctx.fillStyle = "#9f9fcf";
         ctx.strokeRect(app.x+1, app.y+1, app.w + 1, app.h + 11);
         ctx.fillRect(app.x+1, app.y+1, app.w+1, 10);
@@ -575,6 +575,10 @@ function processApps(cm, lm, pt, dt, sz) {
                     app.ny = cm[1]-app.my;
                     app.nw = app.w;
                     app.nh = app.h;
+                    if (app.nx < 0) app.nx = 0;
+                    if (app.ny < 0) app.ny = 0;
+                    if (app.nx + app.nw + 3 > sz[0]) app.nx = sz[0] - app.nw - 3;
+                    if (app.ny + app.nh + 45 > sz[1]) app.ny = sz[1] - app.nh - 45;
                     currentCursor = "drag";
                 }
                 if (app.ree) {
@@ -582,6 +586,10 @@ function processApps(cm, lm, pt, dt, sz) {
                     app.ny = app.y;
                     app.nw = cm[0]-app.ree+app.w-app.x;
                     app.nh = app.h;
+                    if (app.nx < 0) app.nx = 0;
+                    if (app.ny < 0) app.ny = 0;
+                    if (app.nx + app.nw + 3 > sz[0]) app.nx = sz[0] - app.nw - 3;
+                    if (app.ny + app.nh + 45 > sz[1]) app.ny = sz[1] - app.nh - 45;
                     currentCursor = "drag-ew";
                 }
                 if (app.rew) {
@@ -589,6 +597,10 @@ function processApps(cm, lm, pt, dt, sz) {
                     app.ny = app.y;
                     app.nw = app.x+app.w-app.nx;
                     app.nh = app.h;
+                    if (app.nx < 0) app.nx = 0;
+                    if (app.ny < 0) app.ny = 0;
+                    if (app.nx + app.nw + 3 > sz[0]) app.nx = sz[0] - app.nw - 3;
+                    if (app.ny + app.nh + 45 > sz[1]) app.ny = sz[1] - app.nh - 45;
                     currentCursor = "drag-ew";
                 }
                 if (app.res) {
@@ -596,6 +608,10 @@ function processApps(cm, lm, pt, dt, sz) {
                     app.ny = app.y;
                     app.nw = app.w;
                     app.nh = cm[1]-app.res+app.h-app.y;
+                    if (app.nx < 0) app.nx = 0;
+                    if (app.ny < 0) app.ny = 0;
+                    if (app.nx + app.nw + 3 > sz[0]) app.nx = sz[0] - app.nw - 3;
+                    if (app.ny + app.nh + 45 > sz[1]) app.ny = sz[1] - app.nh - 45;
                     currentCursor = "drag-ns";
                 }
                 if (app.ren) {
@@ -603,6 +619,10 @@ function processApps(cm, lm, pt, dt, sz) {
                     app.ny = cm[1]-app.ren;
                     app.nw = app.w;
                     app.nh = app.y+app.h-app.ny;
+                    if (app.nx < 0) app.nx = 0;
+                    if (app.ny < 0) app.ny = 0;
+                    if (app.nx + app.nw + 3 > sz[0]) app.nx = sz[0] - app.nw - 3;
+                    if (app.ny + app.nh + 45 > sz[1]) app.ny = sz[1] - app.nh - 45;
                     currentCursor = "drag-ns";
                 }
             }
@@ -663,6 +683,10 @@ function processApps(cm, lm, pt, dt, sz) {
                 if (app.w < minw) app.w = minw;
                 app.h = Math.abs(app.nh);
                 if (app.h < 50) app.h = 50;
+                if (app.x < 0) app.x = 0;
+                if (app.y < 0) app.y = 0;
+                if (app.x + app.w + 3 > sz[0]) app.x = sz[0] - app.w - 3;
+                if (app.y + app.h + 45 > sz[1]) app.y = sz[1] - app.h - 45;
                 app.canvas.width = app.w;
                 app.canvas.height = app.h;
                 app.mx = app.my = app.nx = app.ny = app.ree = app.rew = app.ren = app.res = app.nw = app.nh = app.rs = undefined;
@@ -675,8 +699,10 @@ function processApps(cm, lm, pt, dt, sz) {
             app.w = sz[0] - 3;
             app.h = sz[1] - 46;
         }
-        app.canvas.width = app.w;
-        app.canvas.height = app.h;
+        if (appObstructionState(i) & 1) {
+          app.canvas.width = app.w;
+          app.canvas.height = app.h;
+        }
         if (app.wrs > 0) app.wrs--;
         if (app.rs) drawImage("button-resize-pressed.png", app.x + app.w - 43, app.y + 1, 8, 8);
         else drawImage("button-resize.png", app.x + app.w - 43, app.y + 1, 8, 8);
@@ -686,12 +712,14 @@ function processApps(cm, lm, pt, dt, sz) {
         ctx.textAlign = "left";
         ctx.fillText(app.n, app.x+1, app.y+1);
         ctx.fillRect(app.x+1, app.y+11, app.w, app.h);
-        app.ctx.fillStyle = "#000";
-        app.ctx.fillRect(0, 0, app.w, app.h);
+        if (appObstructionState(i) & 1) {
+          app.ctx.fillStyle = "#000";
+          app.ctx.fillRect(0, 0, app.w, app.h);
+        }
         images["temp-appgfx"] = app.canvas;
         app.top = i === appOrder.length - 1;
         app.hover = appCollidingWith(cm[0], cm[1]) === appOrder[i];
-        files[app._path + app.s].r(cm, lm, pt, dt, sz, app, {x: app.x + 1, y: app.y + 11, w: app.w, h: app.h});
+        if (appObstructionState(i) & 1) files[app._path + app.s].r(cm, lm, pt, dt, sz, app, {x: app.x + 1, y: app.y + 11, w: app.w, h: app.h});
         drawImage("temp-appgfx", app.x+1, app.y+11, app.w, app.h)
         if (app.mx || app.ree || app.rew || app.ren || app.res) {
             ctx.lineWidth = 1;
@@ -753,6 +781,17 @@ function appCollidingWith(x, y) {
     return null;
 }
 
+function appObstructionState(appId) { // 1-bit: on top, 2-bit: partially obstructed, 3-bit fully obstructed
+    var top = appId === appOrder.length - 1;
+    var part = false;
+    var full = false;
+    for (var i = appId + 1; i < appOrder.length; i++) {
+        if (rectInRect(apps[appOrder[appId]].x, apps[appOrder[appId]].y, apps[appOrder[appId]].w + 3, apps[appOrder[appId]].h + 13, apps[appOrder[i]].x, apps[appOrder[i]].y, apps[appOrder[i]].w + 3, apps[appOrder[i]].h + 13)) part = true;
+        if (rectCoveringRect(apps[appOrder[appId]].x, apps[appOrder[appId]].y, apps[appOrder[appId]].w + 3, apps[appOrder[appId]].h + 13, apps[appOrder[i]].x, apps[appOrder[i]].y, apps[appOrder[i]].w + 3, apps[appOrder[i]].h + 13)) full = true;
+    }
+    return (top?1:0)+(part?2:0)+(full?4:0);
+}
+
 function clone(obj) {
         var copy;
 
@@ -797,6 +836,68 @@ function lerpUnclamped(v0, v1, t) {
 
 function inBox(px, py, x, y, w, h) {
     return px >= x && px <= x + w && py >= y && py <= y + h;
+}
+
+function LineToLine(a1, a2, b1, b2) {
+    var result;
+
+    var ua_t = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x);
+    var ub_t = (a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x);
+    var u_b  = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
+
+    if ( u_b != 0 ) {
+        var ua = ua_t / u_b;
+        var ub = ub_t / u_b;
+
+        if ( 0 <= ua && ua <= 1 && 0 <= ub && ub <= 1 ) {
+            result = {
+                x: a1.x + ua * (a2.x - a1.x),
+                y: a1.y + ua * (a2.y - a1.y)
+            }
+        } else {
+            result = false;
+        }
+    } else {
+        if ( ua_t == 0 || ub_t == 0 ) {
+            result = false
+        } else {
+            result = false;
+        }
+    }
+
+    return result;
+};
+
+function rectInRect(x1, y1, w1, h1, x2, y2, w2, h2) {
+    // top to left
+    if (LineToLine({x: x1, y: y1}, {x: x1+w1, y: y1}, {x: x2, y: y2}, {x: x2, y: y2+h2})) return true;
+    // top to right
+    if (LineToLine({x: x1, y: y1}, {x: x1+w1, y: y1}, {x: x2+w2, y: y2}, {x: x2+w2, y: y2+h2})) return true;
+    // bottom to left
+    if (LineToLine({x: x1, y: y1+h1}, {x: x1+w1, y: y1+h1}, {x: x2, y: y2}, {x: x2, y: y2+h2})) return true;
+    // bottom to right
+    if (LineToLine({x: x1, y: y1+h1}, {x: x1+w1, y: y1+h1}, {x: x2+w2, y: y2}, {x: x2+w2, y: y2+h2})) return true;
+    // left to top
+    if (LineToLine({x: x1, y: y1}, {x: x1, y: y1+h1}, {x: x2, y: y2}, {x: x2+w2, y: y2})) return true;
+    // left to bottom
+    if (LineToLine({x: x1, y: y1}, {x: x1, y: y1+h1}, {x: x2, y: y2+h2}, {x: x2+w2, y: y2+h2})) return true;
+    // right to top
+    if (LineToLine({x: x1+w1, y: y1}, {x: x1+w1, y: y1+h1}, {x: x2, y: y2}, {x: x2+w2, y: y2})) return true;
+    // right to bottom
+    if (LineToLine({x: x1+w1, y: y1}, {x: x1+w1, y: y1+h1}, {x: x2, y: y2+h2}, {x: x2+w2, y: y2+h2})) return true;
+    return false;
+}
+
+function rectCoveringRect(x1, y1, w1, h1, x2, y2, w2, h2) {
+    // top-left
+    if (!inBox(x1, y1, x2, y2, w2, h2)) return false;
+    // top-right
+    if (!inBox(x1+w1, y1, x2, y2, w2, h2)) return false;
+    // bottom-left
+    if (!inBox(x1, y1+h1, x2, y2, w2, h2)) return false;
+    // bottom-right
+    if (!inBox(x1+w1, y1+h1, x2, y2, w2, h2)) return false;
+    return true;
 }
 
 function drawImage(i, x, y, w, h) {
