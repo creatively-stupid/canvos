@@ -22,13 +22,14 @@ window.onresize = () => {
     canvas.height = s[1];
 };
 
+// yes i use prototypes
 Number.prototype.clamp = function(min, max) {
     return Math.min(Math.max(this, min), max);
 };
 String.prototype.removeAt = function(char) {
     return this.slice(0, char) + this.slice(char + 1);
 };
-String.prototype.insertAt=function(index, string) { 
+String.prototype.insertAt=function(index, string) {
     return this.substring(0, index) + string + this.substring(index);
 }
 Object.prototype.getKeyByValue=function(value) {
@@ -50,7 +51,7 @@ function log(command, data) {
 /* /""""  __   . __  .   . /"""\ /"""-       /"""\
 * |     /  \  |/  |  \ /  |   | '---.         _-'
 * \____ \__/\ |   |   V   \___/ -___/       /"___
-* 
+*
 * /\"\"\"\"  __   . __  .   . /\"\"\"\\ /\"\"\"-       /\"\"\"\\
 * |     /  \\  |/  |  \\ /  |   | '---.         _-'
 * \\____ \\__/\\ |   |   V   \\___/ -___/       /\"___
@@ -70,19 +71,19 @@ var Keyboard = {update: () => {}};
 
 var wallpaperloc = "fs/user/pictures/wallpaper0.jpg";
 
-loadImageData("startbar.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAgCAYAAADT5RIaAAAAmUlEQVR42g3EOwtBAQAF4OP9fv0li8FiMVgsFovBYjFYLAYShSIlSpESKUVK3cFyFyWLlOUuShYpy3G+4QNIwvb9EfbXR1lvwnF/Es6LRbjMhzJuhHt/JTzrM+Gdm4RvfFIDg/B3j6p1UI0dEahtVXVDBCsrVV6q0oIIFWeqMFX5CRHOjVR2SEQyfZXuqVSHiCbbKtEkYvE6/ztrS1y281jxAAAAAElFTkSuQmCC");
-loadImageData("button-close.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA7SURBVChTY2hoaPiPCwMBA1gBAwMDigSMD6Tt4SYgCSIrRChAl4TyiTQBi05UBbgwWAHYKyAGVsxgDwCrv3X99AYkdgAAAABJRU5ErkJggg==");
-loadImageData("button-close-pressed.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA4SURBVChTY/jPwPAfJwaTYIQqAeMDaXu4CUiCyAoRCqACcDaUT6QJWHSiKsCFIQpATBADK2awBwDvS2HVWMVr2AAAAABJRU5ErkJggg==");
-loadImageData("button-fullwin.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADhJREFUKFNjaGho+I8LAwEDWAEDAwMYY2HbwxWAaBjGUIALE28CSABJEFMBLgxWAPYKiIEVM9gDAAQhcX19ULvpAAAAAElFTkSuQmCC");
-loadImageData("button-fullwin-pressed.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADFJREFUKFNj+M/A8B8nBpNgBMFY2PYgEi4AwxgKcGHiTQAJIAkis4mxAsQEMbBiBnsAKQRe2PMX1HEAAAAASUVORK5CYII=");
-loadImageData("button-unfullwin.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAD1JREFUKFNjaGho+I8LAwEDXAEDAwMKDWXbgxWABJEVILEhCnBhuAI0XchshAnICpDEiLAC7BUQAytmsAcABCFxff6yfj4AAAAASUVORK5CYII=");
-loadImageData("button-unfullwin-pressed.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADlJREFUKFNj+M/A8B8nBpNQDgMaDWXbgxWABJEVILEhCnBhuAI0XchshAnICpDEiLECxAQxsGIGewApBF7Y5jH5hgAAAABJRU5ErkJggg==");
-loadImageData("button-minimize.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAACtJREFUKFNjaGho+I8LAwEDXgUMDAz2xCkAMjAwigJcmEoKwF4BMbBiBnsANft7/VkYZY4AAAAASUVORK5CYII=");
-loadImageData("button-minimize-pressed.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAC9JREFUKFNj+M/A8B8nBpPogkiYgYHBnjgFQAYGBhIgmkgTcGEiFYCYIAZWzGAPAE0YZdHy4EAVAAAAAElFTkSuQmCC");
-loadImageData("button-move.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADZJREFUKFNjaGho+I8LAwEDXAEDAwMcI4nZgxUgCyLzqagAJgjDSGIIBdgwWAHYKyAGVsxgDwAEIXF9HNjjqwAAAABJRU5ErkJggg==");
-loadImageData("button-move-pressed.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADJJREFUKFNj+M/A8B8nBpNQDgMSRhKzBytAFkTmU1EBTBCGkcQQCrBhiAIQE8TAihnsASkEXti78Kt3AAAAAElFTkSuQmCC");
-loadImageData("button-resize.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADVJREFUKFNjaGho+I8LAwEDWAEDAwNYAAttj9cEuAKYDiQJVAW4MIYJWGgiTAB7BcTAihnsAY5Od31I0YxzAAAAAElFTkSuQmCC");
-loadImageData("button-resize-pressed.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAC5JREFUKFNj+M/A8B8nBpNgBBHAQtuDFeDCcAUwHTBMvglYaGJMADFBDKyYwR4AhsJi1KlAOzcAAAAASUVORK5CYII=");
+loadImageData("startbar.png",                 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAgCAYAAADT5RIaAAAAmUlEQVR42g3EOwtBAQAF4OP9fv0li8FiMVgsFovBYjFYLAYShSIlSpESKUVK3cFyFyWLlOUuShYpy3G+4QNIwvb9EfbXR1lvwnF/Es6LRbjMhzJuhHt/JTzrM+Gdm4RvfFIDg/B3j6p1UI0dEahtVXVDBCsrVV6q0oIIFWeqMFX5CRHOjVR2SEQyfZXuqVSHiCbbKtEkYvE6/ztrS1y281jxAAAAAElFTkSuQmCC");
+loadImageData("button-close.png",             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA7SURBVChTY2hoaPiPCwMBA1gBAwMDigSMD6Tt4SYgCSIrRChAl4TyiTQBi05UBbgwWAHYKyAGVsxgDwCrv3X99AYkdgAAAABJRU5ErkJggg=="        );
+loadImageData("button-close-pressed.png",     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA4SURBVChTY/jPwPAfJwaTYIQqAeMDaXu4CUiCyAoRCqACcDaUT6QJWHSiKsCFIQpATBADK2awBwDvS2HVWMVr2AAAAABJRU5ErkJggg=="            );
+loadImageData("button-fullwin.png",           "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADhJREFUKFNjaGho+I8LAwEDWAEDAwMYY2HbwxWAaBjGUIALE28CSABJEFMBLgxWAPYKiIEVM9gDAAQhcX19ULvpAAAAAElFTkSuQmCC"                                );
+loadImageData("button-fullwin-pressed.png",   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADFJREFUKFNj+M/A8B8nBpNgBMFY2PYgEi4AwxgKcGHiTQAJIAkis4mxAsQEMbBiBnsAKQRe2PMX1HEAAAAASUVORK5CYII="                                        );
+loadImageData("button-unfullwin.png",         "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAD1JREFUKFNjaGho+I8LAwEDXAEDAwMKDWXbgxWABJEVILEhCnBhuAI0XchshAnICpDEiLAC7BUQAytmsAcABCFxff6yfj4AAAAASUVORK5CYII="                        );
+loadImageData("button-unfullwin-pressed.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADlJREFUKFNj+M/A8B8nBpNQDgMaDWXbgxWABJEVILEhCnBhuAI0XchshAnICpDEiLECxAQxsGIGewApBF7Y5jH5hgAAAABJRU5ErkJggg=="                            );
+loadImageData("button-minimize.png",          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAACtJREFUKFNjaGho+I8LAwEDXgUMDAz2xCkAMjAwigJcmEoKwF4BMbBiBnsANft7/VkYZY4AAAAASUVORK5CYII="                                                );
+loadImageData("button-minimize-pressed.png",  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAC9JREFUKFNj+M/A8B8nBpPogkiYgYHBnjgFQAYGBhIgmkgTcGEiFYCYIAZWzGAPAE0YZdHy4EAVAAAAAElFTkSuQmCC"                                            );
+loadImageData("button-move.png",              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADZJREFUKFNjaGho+I8LAwEDXAEDAwMcI4nZgxUgCyLzqagAJgjDSGIIBdgwWAHYKyAGVsxgDwAEIXF9HNjjqwAAAABJRU5ErkJggg=="                                );
+loadImageData("button-move-pressed.png",      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADJJREFUKFNj+M/A8B8nBpNQDgMSRhKzBytAFkTmU1EBTBCGkcQQCrBhiAIQE8TAihnsASkEXti78Kt3AAAAAElFTkSuQmCC"                                        );
+loadImageData("button-resize.png",            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADVJREFUKFNjaGho+I8LAwEDWAEDAwNYAAttj9cEuAKYDiQJVAW4MIYJWGgiTAB7BcTAihnsAY5Od31I0YxzAAAAAElFTkSuQmCC"                                    );
+loadImageData("button-resize-pressed.png",    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAC5JREFUKFNj+M/A8B8nBpNgBBHAQtuDFeDCcAUwHTBMvglYaGJMADFBDKyYwR4AhsJi1KlAOzcAAAAASUVORK5CYII="                                            );
 loadImage(wallpaperloc);
 
 loadScript("html2canvas.min.js");
@@ -841,7 +842,7 @@ document.addEventListener('mouseenter', onMouseUpdate, false);
 document.addEventListener('mouseout', onMouseOut, false);
 document.addEventListener('mousedown', onMouseUpdate, false);
 document.addEventListener('mouseup', onMouseUpdate, false);
-        
+
 function onMouseUpdate(e) {
     e.preventDefault();
     _mousestate[0] = e.pageX;
@@ -976,7 +977,7 @@ function wrapText(ctx, text, width, fontSize) {
         lineTest = '',
         words = text.split(''),
         currentY = 0;
-        
+
     for (var i = 0, len = words.length; i < len; i++) {
         lineTest = line + words[i];
         if (words[i] === "\n") {
@@ -985,7 +986,7 @@ function wrapText(ctx, text, width, fontSize) {
             line = "";
             continue;
         }
-        
+
         // Check total width of line or last word
         if (ctx.measureText(lineTest).width > width) {
             // Calculate the new height
@@ -998,13 +999,13 @@ function wrapText(ctx, text, width, fontSize) {
             line = lineTest;
         }
     }
-    
+
     // Catch last line in-case something is left over
     if (line.length > 0) {
         currentY = lines.length * fontSize + fontSize;
         lines.push({ text: line.trim(), height: currentY });
     }
-    
+
     return {text: lines, height: currentY};
 }
 
@@ -1015,7 +1016,7 @@ function getCursorPos(ctx, text, char, pos, width, fontSize) {
         lineTest = '',
         words = text.split(''),
         currentY = 0;
-        
+
     for (var i = 0, len = words.length; i < len; i++) {
         lineTest = line + words[i];
         if (words[i] === "\n") {
@@ -1024,7 +1025,7 @@ function getCursorPos(ctx, text, char, pos, width, fontSize) {
             line = "";
             continue;
         }
-        
+
         // Check total width of line or last word
         if (ctx.measureText(lineTest).width > width) {
             // Calculate the new height
@@ -1040,13 +1041,13 @@ function getCursorPos(ctx, text, char, pos, width, fontSize) {
             return {line: lines.length-1, char: line.length-1};
         }
     }
-    
+
     // Catch last line in-case something is left over
     if (line.length > 0) {
         currentY = lines.length * fontSize + fontSize;
         lines.push({ text: line.trim(), height: currentY });
     }
-    
+
     alert("major error induced \"my code sucks\"");
 }
 
@@ -1138,7 +1139,7 @@ function launchModal(title, msg, img, btns, w, h, cm, lm, t, dt, sz) {
             }
         },
         s: (curmouse, lastmouse, time, deltatime, size, app, win) => {
-            
+
         }
     }
     launchApp("_tmodal", cm, lm, t, dt, sz);
