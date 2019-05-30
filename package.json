@@ -1,24 +1,24 @@
 {
-    "name": "canvos2",
-    "version": "1.0.0",
-    "description": "CanvOS 2",
-    "main": "server.js",
-    "scripts": {
-        "test": "echo \"yes it works\"",
-        "start": "echo \"use: \\\"sudo node server.js [OPTIONS]\\\" to start.\""
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/creatively-stupid/canvos.git"
-    },
-    "keywords": [
-        "CanvOS",
-        "OS"
-    ],
-    "author": "RedMikePumpkin",
-    "license": "GPL-3.0-or-later",
-    "dependencies": {
-        "open": "^6.1.0",
-        "socket.io": "^2.2.0"
-    }
+  "name": "canvos2",
+  "version": "1.0.0",
+  "description": "CanvOS 2",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"yes it works\"",
+    "start": "echo \"use: \\\"sudo node server.js [OPTIONS]\\\" to start.\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/creatively-stupid/canvos.git"
+  },
+  "keywords": [
+    "CanvOS",
+    "OS"
+  ],
+  "author": "RedMikePumpkin",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "open": "^6.1.0",
+    "socket.io": "^2.2.0"
+  }
 }
