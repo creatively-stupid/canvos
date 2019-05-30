@@ -5,11 +5,10 @@
   "h": 300,
   "f": false,
   "m": false,
-  "i": "icon.png",
-  "n": "Notepad",
+  "i": "",
+  "n": "Clock",
   "rs": false,
   "s": "src.js",
   "d": [
-    2, "lib-bigeval.js"
   ]
 }
