@@ -178,9 +178,12 @@ function frame(time) {
     ctx.font = "900 30px serf";
     ctx.fillText("Start Menu", size[0] * (1-startMenuScroll)-3*size[0]/4, 32);
 
-    drawButton("Notepad", size[0] * (1-startMenuScroll-1)/2+5, 133, size[0]/2-10, 32, () => {
-      launchApp("fs/apps/gui/builtin/notepad/", curmouse, lastmouse, time, deltatime, size);
-    }, curmouse, lastmouse);
+    var exapps = fs.seek("apps/gui/builtin/").getFiles();
+    for (var i = 0; i < exapps.length; i++) {
+      drawButton("App" + (i + 1), size[0] * (1-startMenuScroll-1)/2+5, 133 + i * 32, size[0]/2-10, 32, () => {
+        launchApp("fs/apps/gui/builtin/" + exapps[i] + "/", curmouse, lastmouse, time, deltatime, size);
+      }, curmouse, lastmouse);
+    }
     ctx.globalAlpha = 1;
     drawImage("startbar.png", 0, size[1] - 32, size[0], 32);
     ctx.fillStyle = (curmouse[2] && inBox(curmouse[0], curmouse[1], 2, size[1] - 30, 70, 28)) ? "#9f9fff" : "#7f7fff";
@@ -329,6 +332,7 @@ var files = {};
 var fs;
 
 function loadImage(src) {
+  if (src === null) return;
   loadqueue.push([0, src]);
   console.log(JSON.stringify(src) + " added to queue");
   log("queue-image", src);
@@ -350,6 +354,7 @@ function loadImageData(src, data) {
 }
 
 function loadFile(src) {
+  if (src === null) return;
   loadqueue.push([1, src]);
   console.log(JSON.stringify(src) + " added to queue");
   log("queue-file", src);
@@ -357,6 +362,7 @@ function loadFile(src) {
 }
 
 function loadScript(src) {
+  if (src === null) return;
   loadqueue.push([2, src]);
   console.log(JSON.stringify(src) + " added to queue");
   log("queue-script", src);
@@ -364,6 +370,7 @@ function loadScript(src) {
 }
 
 function loadApp(src) {
+  if (src === null) return;
   loadqueue.push([3, src + "app.json", src]);
   console.log(JSON.stringify(src) + " added to queue");
   log("queue-app", src);
@@ -421,8 +428,8 @@ async function loadAllFiles(callback) {
             console.log("app");
             log("load-app");
             files[loadqueue[0][2]] = JSON.parse(txt);
-            loadImage(loadqueue[0][2] + files[loadqueue[0][2]].i);
-            loadScript(loadqueue[0][2] + files[loadqueue[0][2]].s);
+            if (files[loadqueue[0][2]].i !== null) loadImage(loadqueue[0][2] + files[loadqueue[0][2]].i);
+            if (files[loadqueue[0][2]].s !== null) loadScript(loadqueue[0][2] + files[loadqueue[0][2]].s);
             var deps = files[loadqueue[0][2]].d;
             for (var i = 0; i < deps.length; i+=2) {
               loadqueue.push([deps[i], loadqueue[0][2] + deps[i+1]]);
