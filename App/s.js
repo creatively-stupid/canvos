@@ -71,6 +71,7 @@ var Keyboard = {update: () => {}};
 
 var wallpaperloc = "fs/user/pictures/wallpaper0.jpg";
 
+//                                            Hey look they are all aligned and it looks re -- Oh it stopped thats sad
 loadImageData("startbar.png",                 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAgCAYAAADT5RIaAAAAmUlEQVR42g3EOwtBAQAF4OP9fv0li8FiMVgsFovBYjFYLAYShSIlSpESKUVK3cFyFyWLlOUuShYpy3G+4QNIwvb9EfbXR1lvwnF/Es6LRbjMhzJuhHt/JTzrM+Gdm4RvfFIDg/B3j6p1UI0dEahtVXVDBCsrVV6q0oIIFWeqMFX5CRHOjVR2SEQyfZXuqVSHiCbbKtEkYvE6/ztrS1y281jxAAAAAElFTkSuQmCC");
 loadImageData("button-close.png",             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA7SURBVChTY2hoaPiPCwMBA1gBAwMDigSMD6Tt4SYgCSIrRChAl4TyiTQBi05UBbgwWAHYKyAGVsxgDwCrv3X99AYkdgAAAABJRU5ErkJggg=="        );
 loadImageData("button-close-pressed.png",     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA4SURBVChTY/jPwPAfJwaTYIQqAeMDaXu4CUiCyAoRCqACcDaUT6QJWHSiKsCFIQpATBADK2awBwDvS2HVWMVr2AAAAABJRU5ErkJggg=="            );
@@ -93,11 +94,18 @@ loadAllShit();
 
 loadAllFiles(() => {
   Keyboard = files["keyboard.min.js"];
-  var loadedapps = fs.seek("apps/gui/builtin/");
-  var appnames = loadedapps.getFiles();
-  appnames.forEach((loadedapp) => {
-    loadApp("fs/apps/gui/builtin/" + loadedapp + "/");
-  });
+  var loadapps = (path) => {
+    var loadedapps = fs.seek("apps/gui/" + path);
+    var appnames = loadedapps.getFiles();
+    appnames.forEach((loadedapp) => {
+      if (loadedapps.seek(loadedapp).contains("app.json")) {
+        loadApp("fs/apps/gui/" + path + loadedapp + "/");
+      } else {
+        loadapps(path + loadedapp + "/");
+      }
+    });
+  };
+  loadapps("");
   loadAllFiles(() => {});
 });
 
@@ -459,6 +467,7 @@ function launchApp(app, curmouse, lastmouse, time, deltatime, size) {
   apps.push(clone(files[app]));
   var id = apps.length - 1;
   appOrder.push(id);
+  console.log(apps);
   apps[id].canvas = document.createElement("canvas");
   apps[id].canvas.width = apps[id].w;
   apps[id].canvas.height = apps[id].h;
@@ -1282,11 +1291,12 @@ class Folder {
       }
       return new Folder(newfold);
   }
-  seek(path) {
+  seek(path) { // TODO: implement .. and / paths
     var levels = path.split("/");
     if (levels[levels.length - 1] === "") {
       var f = this;
       for (var i = 0; i < levels.length - 1; i++) {
+        if (levels[i] === ".") continue;
         f = f.getFile(levels[i]);
       }
       return f;
@@ -1297,6 +1307,15 @@ class Folder {
       }
       return f;
     }
+  }
+  isFile() {
+    return false;
+  }
+  isFolder() {
+    return true;
+  }
+  contains(path) {
+    return this.seek(path) !== undefined;
   }
 }
 
@@ -1316,6 +1335,12 @@ class File {
       throw new Error("invalid object to Fileify!");
     }
     return new File(object.file);
+  }
+  isFile() {
+    return true;
+  }
+  isFolder() {
+    return false;
   }
 }
 
