@@ -9,7 +9,7 @@ this project is both called CanvOS and CanvOS 2. this is because I made a CanvOS
 
 you can install CanvOS by running
 ```
-git clone git@github.com:creatively-stupid/canvos.git
+git clone https://github.com/creatively-stupid/canvos.git
 ```
 
 then, from the `canvos/` directory, start Canvos by running `node server.js` with some parameters:
@@ -18,6 +18,11 @@ then, from the `canvos/` directory, start Canvos by running `node server.js` wit
 - `-ip` - displays all external IPs, best used with `-ext`
 - `-ext` - allows external access, when not set, only localhost can access
 - `-noopen` - doesn't open web browser window
+
+recommended commands:
+
+- `node server.js -port 55555` for personal use
+- `node server.js -port 55555 -ip -ext -noopen` for group use
 
 ## To-do list & Notes
 
@@ -29,6 +34,8 @@ then, from the `canvos/` directory, start Canvos by running `node server.js` wit
 
   - terminal
 
-  - notepad
+  - calculator
 
 - fix server open
+
+  - possibly add "template" commands
