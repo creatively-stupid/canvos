@@ -5,11 +5,11 @@
   "h": 300,
   "f": false,
   "m": false,
-  "i": null,
+  "i": "icon.svg",
   "n": "Terminal",
   "rs": false,
   "s": "src.js",
   "d": [
-    
+
   ]
 }

@@ -15,12 +15,18 @@
 var win = undefined;
 var winex = false;
 var preservedData = {};
+var doreopen = false;
 
 function frame(time) {
-  if (win === undefined ||  win.location.href === "") {
+  if (win === undefined || win.screen.width === 0 ||  win.location.href === "") {
     win = undefined;
     if (winex) {
-      openWin();
+      if (doreopen) {
+        openWin();
+      } else {
+        $("#launch").html("Launch CanvOS 2");
+        winex = false;
+      }
     }
   } else {
     if (!winex) {

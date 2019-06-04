@@ -71,20 +71,21 @@ var Keyboard = {update: () => {}};
 
 var wallpaperloc = "fs/user/pictures/wallpaper0.jpg";
 
-//                                            Hey look they are all aligned and it looks re -- Oh it stopped thats sad
-loadImage("startbar.png",                 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAgCAYAAADT5RIaAAAAmUlEQVR42g3EOwtBAQAF4OP9fv0li8FiMVgsFovBYjFYLAYShSIlSpESKUVK3cFyFyWLlOUuShYpy3G+4QNIwvb9EfbXR1lvwnF/Es6LRbjMhzJuhHt/JTzrM+Gdm4RvfFIDg/B3j6p1UI0dEahtVXVDBCsrVV6q0oIIFWeqMFX5CRHOjVR2SEQyfZXuqVSHiCbbKtEkYvE6/ztrS1y281jxAAAAAElFTkSuQmCC");
-loadImage("button-close.png",             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA7SURBVChTY2hoaPiPCwMBA1gBAwMDigSMD6Tt4SYgCSIrRChAl4TyiTQBi05UBbgwWAHYKyAGVsxgDwCrv3X99AYkdgAAAABJRU5ErkJggg=="        );
-loadImage("button-close-pressed.png",     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA4SURBVChTY/jPwPAfJwaTYIQqAeMDaXu4CUiCyAoRCqACcDaUT6QJWHSiKsCFIQpATBADK2awBwDvS2HVWMVr2AAAAABJRU5ErkJggg=="            );
-loadImage("button-fullwin.png",           "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADhJREFUKFNjaGho+I8LAwEDWAEDAwMYY2HbwxWAaBjGUIALE28CSABJEFMBLgxWAPYKiIEVM9gDAAQhcX19ULvpAAAAAElFTkSuQmCC"                                );
-loadImage("button-fullwin-pressed.png",   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADFJREFUKFNj+M/A8B8nBpNgBMFY2PYgEi4AwxgKcGHiTQAJIAkis4mxAsQEMbBiBnsAKQRe2PMX1HEAAAAASUVORK5CYII="                                        );
-loadImage("button-unfullwin.png",         "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAD1JREFUKFNjaGho+I8LAwEDXAEDAwMKDWXbgxWABJEVILEhCnBhuAI0XchshAnICpDEiLAC7BUQAytmsAcABCFxff6yfj4AAAAASUVORK5CYII="                        );
-loadImage("button-unfullwin-pressed.png", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADlJREFUKFNj+M/A8B8nBpNQDgMaDWXbgxWABJEVILEhCnBhuAI0XchshAnICpDEiLECxAQxsGIGewApBF7Y5jH5hgAAAABJRU5ErkJggg=="                            );
-loadImage("button-minimize.png",          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAACtJREFUKFNjaGho+I8LAwEDXgUMDAz2xCkAMjAwigJcmEoKwF4BMbBiBnsANft7/VkYZY4AAAAASUVORK5CYII="                                                );
-loadImage("button-minimize-pressed.png",  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAC9JREFUKFNj+M/A8B8nBpPogkiYgYHBnjgFQAYGBhIgmkgTcGEiFYCYIAZWzGAPAE0YZdHy4EAVAAAAAElFTkSuQmCC"                                            );
-loadImage("button-move.png",              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADZJREFUKFNjaGho+I8LAwEDXAEDAwMcI4nZgxUgCyLzqagAJgjDSGIIBdgwWAHYKyAGVsxgDwAEIXF9HNjjqwAAAABJRU5ErkJggg=="                                );
-loadImage("button-move-pressed.png",      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADJJREFUKFNj+M/A8B8nBpNQDgMSRhKzBytAFkTmU1EBTBCGkcQQCrBhiAIQE8TAihnsASkEXti78Kt3AAAAAElFTkSuQmCC"                                        );
-loadImage("button-resize.png",            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADVJREFUKFNjaGho+I8LAwEDWAEDAwNYAAttj9cEuAKYDiQJVAW4MIYJWGgiTAB7BcTAihnsAY5Od31I0YxzAAAAAElFTkSuQmCC"                                    );
-loadImage("button-resize-pressed.png",    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAC5JREFUKFNj+M/A8B8nBpNgBBHAQtuDFeDCcAUwHTBMvglYaGJMADFBDKyYwR4AhsJi1KlAOzcAAAAASUVORK5CYII="                                            );
+loadImage("unk.svg");
+//                                        Hey look they are all aligned and it looks re -- Oh it stopped thats sad
+loadImageData("startbar.png",             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAgCAYAAADT5RIaAAAAmUlEQVR42g3EOwtBAQAF4OP9fv0li8FiMVgsFovBYjFYLAYShSIlSpESKUVK3cFyFyWLlOUuShYpy3G+4QNIwvb9EfbXR1lvwnF/Es6LRbjMhzJuhHt/JTzrM+Gdm4RvfFIDg/B3j6p1UI0dEahtVXVDBCsrVV6q0oIIFWeqMFX5CRHOjVR2SEQyfZXuqVSHiCbbKtEkYvE6/ztrS1y281jxAAAAAElFTkSuQmCC");
+loadImage("button-close.svg",             "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA7SURBVChTY2hoaPiPCwMBA1gBAwMDigSMD6Tt4SYgCSIrRChAl4TyiTQBi05UBbgwWAHYKyAGVsxgDwCrv3X99AYkdgAAAABJRU5ErkJggg=="        );
+loadImage("button-close-pressed.svg",     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNv1OCegAAAA4SURBVChTY/jPwPAfJwaTYIQqAeMDaXu4CUiCyAoRCqACcDaUT6QJWHSiKsCFIQpATBADK2awBwDvS2HVWMVr2AAAAABJRU5ErkJggg=="            );
+loadImage("button-fullwin.svg",           "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADhJREFUKFNjaGho+I8LAwEDWAEDAwMYY2HbwxWAaBjGUIALE28CSABJEFMBLgxWAPYKiIEVM9gDAAQhcX19ULvpAAAAAElFTkSuQmCC"                                );
+loadImage("button-fullwin-pressed.svg",   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADFJREFUKFNj+M/A8B8nBpNgBMFY2PYgEi4AwxgKcGHiTQAJIAkis4mxAsQEMbBiBnsAKQRe2PMX1HEAAAAASUVORK5CYII="                                        );
+loadImage("button-unfullwin.svg",         "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAD1JREFUKFNjaGho+I8LAwEDXAEDAwMKDWXbgxWABJEVILEhCnBhuAI0XchshAnICpDEiLAC7BUQAytmsAcABCFxff6yfj4AAAAASUVORK5CYII="                        );
+loadImage("button-unfullwin-pressed.svg", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADlJREFUKFNj+M/A8B8nBpNQDgMaDWXbgxWABJEVILEhCnBhuAI0XchshAnICpDEiLECxAQxsGIGewApBF7Y5jH5hgAAAABJRU5ErkJggg=="                            );
+loadImage("button-minimize.svg",          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAACtJREFUKFNjaGho+I8LAwEDXgUMDAz2xCkAMjAwigJcmEoKwF4BMbBiBnsANft7/VkYZY4AAAAASUVORK5CYII="                                                );
+loadImage("button-minimize-pressed.svg",  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAC9JREFUKFNj+M/A8B8nBpPogkiYgYHBnjgFQAYGBhIgmkgTcGEiFYCYIAZWzGAPAE0YZdHy4EAVAAAAAElFTkSuQmCC"                                            );
+loadImage("button-move.svg",              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADZJREFUKFNjaGho+I8LAwEDXAEDAwMcI4nZgxUgCyLzqagAJgjDSGIIBdgwWAHYKyAGVsxgDwAEIXF9HNjjqwAAAABJRU5ErkJggg=="                                );
+loadImage("button-move-pressed.svg",      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADJJREFUKFNj+M/A8B8nBpNQDgMSRhKzBytAFkTmU1EBTBCGkcQQCrBhiAIQE8TAihnsASkEXti78Kt3AAAAAElFTkSuQmCC"                                        );
+loadImage("button-resize.svg",            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADVJREFUKFNjaGho+I8LAwEDWAEDAwNYAAttj9cEuAKYDiQJVAW4MIYJWGgiTAB7BcTAihnsAY5Od31I0YxzAAAAAElFTkSuQmCC"                                    );
+loadImage("button-resize-pressed.svg",    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAC5JREFUKFNj+M/A8B8nBpNgBBHAQtuDFeDCcAUwHTBMvglYaGJMADFBDKyYwR4AhsJi1KlAOzcAAAAASUVORK5CYII="                                            );
 loadImage(wallpaperloc);
 
 loadScript("html2canvas.min.js");
@@ -188,7 +189,7 @@ function frame(time) {
 
     var exapps = fs.seek("apps/gui/builtin/").getFiles();
     for (var i = 0; i < exapps.length; i++) {
-      drawButton("App" + (i + 1), size[0] * (1-startMenuScroll-1)/2+5, 133 + i * 32, size[0]/2-10, 32, () => {
+      drawButton(files["fs/apps/gui/builtin/" + exapps[i] + "/"].n, size[0] * (1-startMenuScroll-1)/2+5, 133 + i * 32, size[0]/2-10, 32, () => {
         launchApp("fs/apps/gui/builtin/" + exapps[i] + "/", curmouse, lastmouse, time, deltatime, size);
       }, curmouse, lastmouse);
     }
@@ -539,24 +540,24 @@ function processApps(cm, lm, pt, dt, sz) {
     }
     if (cm[2]) {
       if (appCollidingWith(cm[0], cm[1]) === appOrder[i]) {
-        if (inBox(cm[0], cm[1], app.x + app.w - 7, app.y + 1, 8, 8)) drawImage("button-close-pressed.png", app.x + app.w - 7, app.y + 1, 8, 8);
-        else drawImage("button-close.png", app.x + app.w - 7, app.y + 1, 8, 8);
-        if (inBox(cm[0], cm[1], app.x + app.w - 16, app.y + 1, 8, 8)) drawImage("button-" + (app.f ? "un" : "") + "fullwin-pressed.png", app.x + app.w - 16, app.y + 1, 8, 8);
-        else drawImage("button-" + (app.f ? "un" : "") + "fullwin.png", app.x + app.w - 16, app.y + 1, 8, 8);
-        if (inBox(cm[0], cm[1], app.x + app.w - 25, app.y + 1, 8, 8)) drawImage("button-minimize-pressed.png", app.x + app.w - 25, app.y + 1, 8, 8);
-        else drawImage("button-minimize.png", app.x + app.w - 25, app.y + 1, 8, 8);
+        if (inBox(cm[0], cm[1], app.x + app.w - 7, app.y + 1, 8, 8)) drawImage("button-close-pressed.svg", app.x + app.w - 7, app.y + 1, 8, 8);
+        else drawImage("button-close.svg", app.x + app.w - 7, app.y + 1, 8, 8);
+        if (inBox(cm[0], cm[1], app.x + app.w - 16, app.y + 1, 8, 8)) drawImage("button-" + (app.f ? "un" : "") + "fullwin-pressed.svg", app.x + app.w - 16, app.y + 1, 8, 8);
+        else drawImage("button-" + (app.f ? "un" : "") + "fullwin.svg", app.x + app.w - 16, app.y + 1, 8, 8);
+        if (inBox(cm[0], cm[1], app.x + app.w - 25, app.y + 1, 8, 8)) drawImage("button-minimize-pressed.svg", app.x + app.w - 25, app.y + 1, 8, 8);
+        else drawImage("button-minimize.svg", app.x + app.w - 25, app.y + 1, 8, 8);
         if (inBox(cm[0], cm[1], app.x + app.w - 43, app.y + 1, 8, 8)) {
           if (!lm[2] && !app.f) {
             app.rs = !app.rs;
           }
         }
         if (inBox(cm[0], cm[1], app.x + app.w - 34, app.y + 1, 8, 8)) {
-          drawImage("button-move-pressed.png", app.x + app.w - 34, app.y + 1, 8, 8);
+          drawImage("button-move-pressed.svg", app.x + app.w - 34, app.y + 1, 8, 8);
           if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren && !app.f) {
             app.mx=cm[0]-app.x;app.my=cm[1]-app.y;
           }
         }
-        else drawImage("button-move.png", app.x + app.w - 34, app.y + 1, 8, 8);
+        else drawImage("button-move.svg", app.x + app.w - 34, app.y + 1, 8, 8);
         if (app.rs) {
           if (inBox(cm[0], cm[1], app.x + app.w, app.y, 2, app.h+13)) {
             if (!app.mx && !app.ree && !app.rew && !app.res && !app.ren && !app.f) {
@@ -580,10 +581,10 @@ function processApps(cm, lm, pt, dt, sz) {
           }
         }
       } else {
-        drawImage("button-close.png", app.x + app.w - 7, app.y + 1, 8, 8);
-        drawImage("button-" + (app.f ? "un" : "") + "fullwin.png", app.x + app.w - 16, app.y + 1, 8, 8);
-        drawImage("button-minimize.png", app.x + app.w - 25, app.y + 1, 8, 8);
-        drawImage("button-move.png", app.x + app.w - 34, app.y + 1, 8, 8);
+        drawImage("button-close.svg", app.x + app.w - 7, app.y + 1, 8, 8);
+        drawImage("button-" + (app.f ? "un" : "") + "fullwin.svg", app.x + app.w - 16, app.y + 1, 8, 8);
+        drawImage("button-minimize.svg", app.x + app.w - 25, app.y + 1, 8, 8);
+        drawImage("button-move.svg", app.x + app.w - 34, app.y + 1, 8, 8);
       }
       if (!app.f) {
         if (app.mx) {
@@ -649,10 +650,10 @@ function processApps(cm, lm, pt, dt, sz) {
         continue;
       }
     } else {
-      drawImage("button-close.png", app.x + app.w - 7, app.y + 1, 8, 8);
-      drawImage("button-" + (app.f ? "un" : "") + "fullwin.png", app.x + app.w - 16, app.y + 1, 8, 8);
-      drawImage("button-minimize.png", app.x + app.w - 25, app.y + 1, 8, 8);
-      drawImage("button-move.png", app.x + app.w - 34, app.y + 1, 8, 8);
+      drawImage("button-close.svg", app.x + app.w - 7, app.y + 1, 8, 8);
+      drawImage("button-" + (app.f ? "un" : "") + "fullwin.svg", app.x + app.w - 16, app.y + 1, 8, 8);
+      drawImage("button-minimize.svg", app.x + app.w - 25, app.y + 1, 8, 8);
+      drawImage("button-move.svg", app.x + app.w - 34, app.y + 1, 8, 8);
       if (lm[2] && appCollidingWith(cm[0], cm[1]) === appOrder[i] && !app.rs && app.wrs === 0) {
         if (inBox(cm[0], cm[1], app.x + app.w - 7, app.y + 1, 8, 8)) {
           delete apps[appOrder[i]];
@@ -720,8 +721,8 @@ function processApps(cm, lm, pt, dt, sz) {
       app.canvas.height = app.h;
     }
     if (app.wrs > 0) app.wrs--;
-    if (app.rs) drawImage("button-resize-pressed.png", app.x + app.w - 43, app.y + 1, 8, 8);
-    else drawImage("button-resize.png", app.x + app.w - 43, app.y + 1, 8, 8);
+    if (app.rs) drawImage("button-resize-pressed.svg", app.x + app.w - 43, app.y + 1, 8, 8);
+    else drawImage("button-resize.svg", app.x + app.w - 43, app.y + 1, 8, 8);
     ctx.font = "400 10px mono";
     ctx.fillStyle = "#000";
     ctx.textBaseline = "top";
@@ -914,18 +915,23 @@ function rectCoveringRect(x1, y1, w1, h1, x2, y2, w2, h2) {
 
 function drawImage(i, x, y, w, h) {
   i = images[i];
-  if (i) ctx.drawImage(i, x, y, w, h);
+  if (!i) i = images["unk.svg"];
+  if (!i) return;
+  ctx.drawImage(i, x, y, w, h);
 }
 
 function drawGlobalImage(i, x, y, w, h, c) {
   i = images[i];
-  if (i) c.drawImage(i, x, y, w, h);
+  if (!i) i = images["unk.svg"];
+  if (!i) return;
+  c.drawImage(i, x, y, w, h);
 }
 
 function imageRes(i) {
   i = images[i];
-  if (i) return [i.width, i.height];
-  return [1, 1];
+  if (!i) i = images["unk"];
+  if (!i) return [1, 1];
+  return [i.width, i.height];
 }
 
 var _mousestate = [0, 0, 0, 0, 0, 0, 0];
