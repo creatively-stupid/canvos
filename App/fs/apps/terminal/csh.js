@@ -8,7 +8,7 @@ async function Run() {
 
 }
 
-// Latte tokenizer used (because its fuckin amazing
+// Latte tokenizer used (because its fuckin amazing)
 function tokenize(string) {
   var class0 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$";
   var class1 = [["~", ""], ["`", ""], ["!", ""], ["%", ""], ["^", ""], ["&", "&"], ["*", "*=/"], ["(", ""], [")", ""], ["-", "-+="], ["+", "+-="], ["=", "=>"], ["{", ""], ["}", ""], ["[", ""], ["]", ""], ["|", "|"], ["\\", ""], [":", ""], [";", ""], ["\"", ""], ["'", ""], ["<", "<="], [">", ">="], [",", ""], [".", ""], ["/", "/=*"], ["?", ""]];
@@ -40,7 +40,7 @@ function tokenize(string) {
           classList.push(2);
           break;
         default:
-          throw new Error(`Invalid New Char ${newChar}`);
+          return i;
       }
       currentClass = newClass;
     } else {
@@ -60,7 +60,7 @@ function tokenize(string) {
           tokenList[tokenList.length - 1] += newChar;
           break;
         default:
-          throw new Error(`Invalid Existing Char ${newChar}`);
+          return i;
       }
     }
   }
