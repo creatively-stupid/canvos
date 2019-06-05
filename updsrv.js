@@ -25,7 +25,7 @@ function Check() {
           process.stdout.write("\nupdater done.");
           startServer();
         } else {
-          process.stdout.write("\nupdating... Please restart the program");
+          process.stdout.write("\nupdating...");
           startServer();
         }
       }
