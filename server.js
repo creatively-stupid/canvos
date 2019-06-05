@@ -4,7 +4,19 @@ var http = require('http'),
   os = require('os'),
   open = require("open"),
   io = require("socket.io")(1337),
-  exec = require("child_process").exec;;
+  exec = require("child_process").exec;
+
+var execSh = function(command, cb) {
+    var child = exec(command, function(err, stdout, stderr){
+        if(err != null){
+            return cb(new Error(err), null);
+        }else if(typeof(stderr) != "string"){
+            return cb(new Error(stderr), null);
+        }else{
+            return cb(null, stdout);
+        }
+    });
+}
 
 var fileExtensions = JSON.parse(fs.readFileSync("./extensions.json", { encoding: "utf-8" }));
 
