@@ -19,15 +19,15 @@ var execSh = function(command, cb) {
 }
 
 if (os.platform() === "linux") {
-  console.log("updater starting...")
+  process.stdout.write("\nupdater starting...")
   execSh("git pull", (e, m) => {
-    if (e) console.log("updater ERR: " + e);
+    if (e) process.stdout.write("\nupdater ERR: " + e);
     else {
-      if (m === "Already up-to-date.") {
-        console.log("up to date");
-        console.log("updater done.");
+      if (m.toString() == "Already up-to-date.\n") {
+        process.stdout.write("\nup to date");
+        process.stdout.write("\nupdater done.");
       } else {
-        console.log("updating... Please restart the program");
+        process.stdout.write("\nupdating... Please restart the program");
         if (server) server.close();
         process.exit(0);
       }
