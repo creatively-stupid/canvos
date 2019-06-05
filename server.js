@@ -3,7 +3,8 @@ var http = require('http'),
   fs = require('fs'),
   os = require('os'),
   open = require("open"),
-  io = require("socket.io")(1337);
+  io = require("socket.io")(1337),
+  exec = require("child_process").exec;;
 
 var fileExtensions = JSON.parse(fs.readFileSync("./extensions.json", { encoding: "utf-8" }));
 
@@ -50,7 +51,6 @@ if (argvs["-ip"]) {
   });
 }
 console.log();
-
 process.on('SIGINT', function() {
     server.close();
     console.log("\nExiting...");

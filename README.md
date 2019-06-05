@@ -40,6 +40,8 @@ recommended commands:
 
   - calculator
 
+- add socket.io integration
+
 - fix server open
 
   - possibly add "template" commands
