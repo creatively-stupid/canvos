@@ -14,7 +14,7 @@ cd canvos/
 npm install
 ```
 
-submit an issue [here](https://github.com/creatively-stupid/canvos/issues/new) if you have any problems
+Submit an issue [here](https://github.com/creatively-stupid/canvos/issues/new) if you have any problems.
 
 then, from the `canvos/` directory, start Canvos by running `node server.js` with some parameters:
 
