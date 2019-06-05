@@ -33,6 +33,7 @@ function Check() {
   }
 }
 
+Check();
 
 function startServer() {
   if (server && server.quit) server.quit();
