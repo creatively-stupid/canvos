@@ -86,6 +86,12 @@ process.on('SIGINT', function() {
     process.exit(0);
 });
 
+module.exports.quit = () => {
+  server.close();
+  console.log("\nExiting...");
+  process.exit(0);
+}
+
 var lastIp = "";
 
 var server = http.createServer(function (req, res) {
