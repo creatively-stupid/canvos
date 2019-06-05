@@ -23,7 +23,14 @@ if (os.platform() === "linux") {
   execSh("git pull", (e, m) => {
     if (e) console.log("updater ERR: " + e);
     else {
-      console.log("updater RES: " + m);
+      if (m === "Already up-to-date.") {
+        console.log("up to date");
+        console.log("updater done.");
+      } else {
+        console.log("updating... Please restart the program");
+        if (server) server.close();
+        process.exit(0);
+      }
     }
   });
 }
