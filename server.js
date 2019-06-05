@@ -18,6 +18,16 @@ var execSh = function(command, cb) {
     });
 }
 
+if (os.platform() === "linux") {
+  console.log("updater starting...")
+  execSh("git pull", (e, m) => {
+    if (e) console.log("updater ERR: " + e);
+    else {
+      console.log("updater RES: " + m);
+    }
+  });
+}
+
 var fileExtensions = JSON.parse(fs.readFileSync("./extensions.json", { encoding: "utf-8" }));
 
 var CustomError=(name="CustomError",message="")=>{Error.call(message);this.name=name;this.message=message;};CustomError.prototype=Error.prototype;
