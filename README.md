@@ -3,7 +3,7 @@ HTML / CSS / JS Desktop Environment
 
 ## CanvOS vs. CanvOS 2
 
-this project is both called CanvOS and CanvOS 2. this is because I made a CanvOS a while ago, but used a really slow canvas graphics implementation (i drew a bunch of 1x1 rectangles). I never released CanvOS, and thus this project is simultaniously CanvOS and CanvOS 2
+This project is both called CanvOS and CanvOS 2. this is because I made a CanvOS a while ago, but used a really slow canvas graphics implementation (i drew a bunch of 1x1 rectangles). I never released CanvOS, and thus this project is simultaniously CanvOS and CanvOS 2.
 
 ## Installation
 
