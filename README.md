@@ -45,5 +45,3 @@ recommended commands:
 - fix server open
 
   - possibly add "template" commands
-
-  - stuff
