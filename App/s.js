@@ -68,6 +68,7 @@ log("msg", "we are currently booting up...");
 var loadqueue = [];
 var loadMax = 0;
 var Keyboard = {update: () => {}};
+var StackBlur = {};
 
 var wallpaperloc = "fs/user/pictures/wallpaper0.jpg";
 
@@ -90,11 +91,13 @@ loadImage(wallpaperloc);
 
 loadScript("html2canvas.min.js");
 loadScript("keyboard.min.js");
+loadScript("blur.js");
 
 loadAllShit();
 
 loadAllFiles(() => {
   Keyboard = files["keyboard.min.js"];
+  StackBlur = files["blur.js"];
   var loadapps = (path) => {
     var loadedapps = fs.seek("apps/gui/" + path);
     var appnames = loadedapps.getFiles();
@@ -121,7 +124,7 @@ var lastTime = 0;
 var apps = [];
 var appOrder = [];
 
-var mouseposs = new Array(10);
+var mouseposs = new Array(20);
 var passCanvas = document.createElement("canvas");
 var passCanvasctx = passCanvas.getContext("2d");
 for (var i = 0; i < mouseposs.length; i++) {
@@ -155,22 +158,30 @@ function drawCursorTrail(curmouse, lastmouse) {
   passCanvas.width = difx;
   passCanvas.height = dify;
   passCanvasctx.clearRect( 0, 0, passCanvas.width, passCanvas.height);
-  passCanvasctx.fillStyle = "#000";
+  var preCurSize = cursorSize;
   for (var i = mouseposs.length - 1; i > 0; i--) {
-    console.log(i);
-    if (mouseposs[i][0] === Math.Infinity) continue;
-    //passCanvasctx.fillRect(mouseposs[i][0] - minx - 5, mouseposs[i][1] - miny - 5, 10, 10);
+    cursorSize = preCurSize * (1-(i / mouseposs.length));
+    //passCanvasctx.globalAlpha = 1-(i / mouseposs.length);
+    if (mouseposs[i][0] === Infinity) continue;
+    if (mouseposs[i - 1][0] === Infinity) continue;
     var p1x = mouseposs[i][0] - minx;
     var p1y = mouseposs[i][1] - miny;
     var p2x = mouseposs[i-1][0] - minx;
     var p2y = mouseposs[i-1][1] - miny;
-    for (var i = 0; i < 1; i+=0.1) {
-      drawCursor(passCanvasctx, [lerp(p1x, p2x, i), lerp(p1y, p2y, i), curmouse[2], curmouse[3], curmouse[4], curmouse[5], curmouse[6]], [0, 0, lastmouse[2], lastmouse[3], lastmouse[4], lastmouse[5], lastmouse[6]])
+    //console.log(p1x, p1y, p2x, p2y);
+    for (var j = 0, inc = 3/dist(p1x, p1y, p2x, p2y); j < 1; j+=inc) {
+      //passCanvasctx.fillStyle = "#000";
+      //passCanvasctx.fillRect(lerpUnclamped(p1x, p2x, j) - 5, lerpUnclamped(p1y, p2y, j) - 5, 10, 10);
+      drawCursor(passCanvasctx, [lerpUnclamped(p1x, p2x, j), lerpUnclamped(p1y, p2y, j), curmouse[2], curmouse[3], curmouse[4], curmouse[5], curmouse[6]], [0, 0, lastmouse[2], lastmouse[3], lastmouse[4], lastmouse[5], lastmouse[6]])
     }
   }
+  cursorSize = preCurSize;
   //ctx.fillStyle = "#000";
   //ctx.fillRect(minx, miny, difx, dify);
+  StackBlur.canvasRGBA(passCanvas, 0, 0, difx, dify, 5);
+  ctx.globalAlpha = 0.5;
   ctx.drawImage(passCanvas, minx, miny, difx, dify);
+  ctx.globalAlpha = 1;
 }
 
 var running = true;
@@ -897,11 +908,16 @@ function clone(obj) {
 }
 
 function lerp(v0, v1, t, mi, ma) {
-  return (v0*(1-t)+v1*t).clamp(mi, ma);
+  return (v0*(1-t)+v1*t).clamp(mi || 0, ma || 1);
 }
 
 function lerpUnclamped(v0, v1, t) {
   return v0*(1-t)+v1*t;
+}
+
+function dist(ax, ay, bx, by) {
+  var a = bx - ax, b = by - ay;
+  return Math.sqrt((a*a)+(b*b));
 }
 
 function inBox(px, py, x, y, w, h) {
