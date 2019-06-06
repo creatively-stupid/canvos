@@ -121,6 +121,58 @@ var lastTime = 0;
 var apps = [];
 var appOrder = [];
 
+var mouseposs = new Array(10);
+var passCanvas = document.createElement("canvas");
+var passCanvasctx = passCanvas.getContext("2d");
+for (var i = 0; i < mouseposs.length; i++) {
+  mouseposs[i] = [0, 0];
+}
+
+function drawCursorTrail(curmouse, lastmouse) {
+  var minx = 100000;
+  var miny = 100000;
+  var maxx = 0;
+  var maxy = 0;
+  for (var i = mouseposs.length - 1; i > 0; i--) {
+    mouseposs[i][0] = mouseposs[i-1][0];
+    mouseposs[i][1] = mouseposs[i-1][1];
+    if (mouseposs[i][0] === Infinity) continue;
+    if (mouseposs[i][0] < minx) minx = mouseposs[i][0];
+    if (mouseposs[i][0] > maxx) maxx = mouseposs[i][0];
+    if (mouseposs[i][1] < miny) miny = mouseposs[i][1];
+    if (mouseposs[i][1] > maxy) maxy = mouseposs[i][1];
+  }
+  mouseposs[0][0] = curmouse[0];
+  mouseposs[0][1] = curmouse[1];
+  maxx = Math.round(maxx + 2*cursorSize);
+  maxy = Math.round(maxy + 2*cursorSize);
+  minx = Math.round(minx - 2*cursorSize);
+  miny = Math.round(miny - 2*cursorSize);
+  var difx = maxx - minx;
+  var dify = maxy - miny;
+  if (difx <= 0 || difx == Infinity) difx = 1;
+  if (dify <= 0 || dify == Infinity) dify = 1;
+  passCanvas.width = difx;
+  passCanvas.height = dify;
+  passCanvasctx.clearRect( 0, 0, passCanvas.width, passCanvas.height);
+  passCanvasctx.fillStyle = "#000";
+  for (var i = mouseposs.length - 1; i > 0; i--) {
+    console.log(i);
+    if (mouseposs[i][0] === Math.Infinity) continue;
+    //passCanvasctx.fillRect(mouseposs[i][0] - minx - 5, mouseposs[i][1] - miny - 5, 10, 10);
+    var p1x = mouseposs[i][0] - minx;
+    var p1y = mouseposs[i][1] - miny;
+    var p2x = mouseposs[i-1][0] - minx;
+    var p2y = mouseposs[i-1][1] - miny;
+    for (var i = 0; i < 1; i+=0.1) {
+      drawCursor(passCanvasctx, [lerp(p1x, p2x, i), lerp(p1y, p2y, i), curmouse[2], curmouse[3], curmouse[4], curmouse[5], curmouse[6]], [0, 0, lastmouse[2], lastmouse[3], lastmouse[4], lastmouse[5], lastmouse[6]])
+    }
+  }
+  //ctx.fillStyle = "#000";
+  //ctx.fillRect(minx, miny, difx, dify);
+  ctx.drawImage(passCanvas, minx, miny, difx, dify);
+}
+
 var running = true;
 
 function frame(time) {
@@ -206,7 +258,8 @@ function frame(time) {
     ctx.fillText(Math.round(1/deltatime) + " FPS", size[0] - 3, size[1] - 29);
     drawTray(curmouse, lastmouse, time, deltatime, size);
     ctx.globalAlpha = 1;
-    drawCursor(curmouse, lastmouse);
+    drawCursorTrail(curmouse, lastmouse);
+    drawCursor(ctx, curmouse, lastmouse);
   } else {
     var grd = ctx.createLinearGradient(0, 0, 0, size[1]);
     grd.addColorStop(0, "#ff9900");
@@ -998,7 +1051,7 @@ function setCursor(n) {
   htmlCursor = n;
 }
 
-function drawCursor(cm, lm) {
+function drawCursor(ctx, cm, lm) {
   if (!cursorCanvas) {
     if (currentCursor.startsWith("cursor")) {
       if (currentCursor === "cursor-hover") {
