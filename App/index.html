@@ -16,14 +16,10 @@
         <div class="h-strech">
           <div class="h-box">
             <abbr title="Launch CanvOS 2"><button id="launch">Launch CanvOS</button></abbr>
-          </div>
-          <div class="h-box">
             <abbr title="Open the debug console for CanvOS 2"><button id="console">Open console</button></abbr>
           </div>
           <div class="h-box">
             <abbr title="Open the CanvOS User Manual"><button id="manual">Manual</button></abbr>
-          </div>
-          <div class="h-box">
             <abbr title="Open the CanvOS GitHub Repository"><button id="github">Github Repo</button></abbr>
           </div>
         </div>
@@ -34,7 +30,7 @@
 var win = undefined;
 var winex = false;
 var preservedData = {};
-var doreopen = true;
+var doreopen = false;
 
 function frame(time) {
   if (win === undefined ||  win.location.href === "" || win.screen.width === 0) {

@@ -124,7 +124,7 @@ var lastTime = 0;
 var apps = [];
 var appOrder = [];
 
-var mouseposs = new Array(20);
+var mouseposs = new Array(3);
 var passCanvas = document.createElement("canvas");
 var passCanvasctx = passCanvas.getContext("2d");
 for (var i = 0; i < mouseposs.length; i++) {
@@ -147,6 +147,12 @@ function drawCursorTrail(curmouse, lastmouse) {
   }
   mouseposs[0][0] = curmouse[0];
   mouseposs[0][1] = curmouse[1];
+    if (mouseposs[0][0] !== Infinity) {
+    if (mouseposs[0][0] < minx) minx = mouseposs[0][0];
+    if (mouseposs[0][0] > maxx) maxx = mouseposs[0][0];
+    if (mouseposs[0][1] < miny) miny = mouseposs[0][1];
+    if (mouseposs[0][1] > maxy) maxy = mouseposs[0][1];
+}
   maxx = Math.round(maxx + 2*cursorSize);
   maxy = Math.round(maxy + 2*cursorSize);
   minx = Math.round(minx - 2*cursorSize);
@@ -159,9 +165,11 @@ function drawCursorTrail(curmouse, lastmouse) {
   passCanvas.height = dify;
   passCanvasctx.clearRect( 0, 0, passCanvas.width, passCanvas.height);
   var preCurSize = cursorSize;
+  passCanvasctx.strokeStyle = "#000";
+  passCanvasctx.fillStyle = "#000";
   for (var i = mouseposs.length - 1; i > 0; i--) {
-    cursorSize = preCurSize * (1-(i / mouseposs.length));
-    //passCanvasctx.globalAlpha = 1-(i / mouseposs.length);
+    //cursorSize = preCurSize * (1-(i / mouseposs.length));
+    passCanvasctx.globalAlpha = (1-(i / mouseposs.length)) ** 2;
     if (mouseposs[i][0] === Infinity) continue;
     if (mouseposs[i - 1][0] === Infinity) continue;
     var p1x = mouseposs[i][0] - minx;
@@ -169,18 +177,20 @@ function drawCursorTrail(curmouse, lastmouse) {
     var p2x = mouseposs[i-1][0] - minx;
     var p2y = mouseposs[i-1][1] - miny;
     //console.log(p1x, p1y, p2x, p2y);
-    for (var j = 0, inc = 3/dist(p1x, p1y, p2x, p2y); j < 1; j+=inc) {
+    var inc = Math.max(3/dist(p1x, p1y, p2x, p2y), 0.02);
+    //console.log(inc);
+    for (var j = 0; j < 1; j+=inc) {
       //passCanvasctx.fillStyle = "#000";
       //passCanvasctx.fillRect(lerpUnclamped(p1x, p2x, j) - 5, lerpUnclamped(p1y, p2y, j) - 5, 10, 10);
-      drawCursor(passCanvasctx, [lerpUnclamped(p1x, p2x, j), lerpUnclamped(p1y, p2y, j), curmouse[2], curmouse[3], curmouse[4], curmouse[5], curmouse[6]], [0, 0, lastmouse[2], lastmouse[3], lastmouse[4], lastmouse[5], lastmouse[6]])
+      drawCursor(passCanvasctx, [lerpUnclamped(p1x, p2x, j), lerpUnclamped(p1y, p2y, j), curmouse[2], curmouse[3], curmouse[4], curmouse[5], curmouse[6]], [0, 0, lastmouse[2], lastmouse[3], lastmouse[4], lastmouse[5], lastmouse[6]], true);
     }
   }
+  drawCursor(passCanvasctx, curmouse, lastmouse, true);
   cursorSize = preCurSize;
-  //ctx.fillStyle = "#000";
-  //ctx.fillRect(minx, miny, difx, dify);
+  //ctx.strokeRect(minx, miny, difx, dify);
   StackBlur.canvasRGBA(passCanvas, 0, 0, difx, dify, 5);
   ctx.globalAlpha = 0.5;
-  ctx.drawImage(passCanvas, minx, miny, difx, dify);
+  ctx.drawImage(passCanvas, minx + 3, miny + 3, difx, dify);
   ctx.globalAlpha = 1;
 }
 
@@ -270,7 +280,7 @@ function frame(time) {
     drawTray(curmouse, lastmouse, time, deltatime, size);
     ctx.globalAlpha = 1;
     if (cursorTrail) drawCursorTrail(curmouse, lastmouse);
-    drawCursor(ctx, curmouse, lastmouse);
+    drawCursor(ctx, curmouse, lastmouse, false);
   } else {
     var grd = ctx.createLinearGradient(0, 0, 0, size[1]);
     grd.addColorStop(0, "#ff9900");
@@ -1068,7 +1078,7 @@ function setCursor(n) {
   htmlCursor = n;
 }
 
-function drawCursor(ctx, cm, lm) {
+function drawCursor(ctx, cm, lm, cc) {
   if (!cursorCanvas) {
     if (currentCursor.startsWith("cursor")) {
       if (currentCursor === "cursor-hover") {
@@ -1098,10 +1108,12 @@ function drawCursor(ctx, cm, lm) {
   var cs = cursorSize;
   if (currentCursor.startsWith("cursor")) {
     ctx.beginPath();
-    ctx.strokeColor = "#000";
-    ctx.fillStyle = cm[2] ? "#00f" : "#ff0";
-    if (currentCursor === "cursor-hover") {
-      ctx.fillStyle = "#f00";
+    if (!cc) {
+      ctx.strokeColor = "#000";
+      ctx.fillStyle = cm[2] ? "#00f" : "#ff0";
+      if (currentCursor === "cursor-hover") {
+        ctx.fillStyle = "#f00";
+      }
     }
     ctx.moveTo(cm[0], cm[1]);
     ctx.lineTo(cm[0] + cs, cm[1] + cs);
@@ -1112,8 +1124,10 @@ function drawCursor(ctx, cm, lm) {
     ctx.stroke();
   } else if (currentCursor.startsWith("drag")) {
     ctx.beginPath();
-    ctx.strokeColor = "#000";
-    ctx.fillStyle = "#00f";
+    if (!cc) {
+      ctx.strokeColor = "#000";
+      ctx.fillStyle = "#00f";
+    }
     var ns = true;
     var ew = true;
     if (currentCursor === "drag-ns") {
