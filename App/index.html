@@ -4,16 +4,29 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>CanvOS 2</title>
-    <link href="./s.css" rel="stylesheet" type="text/css">
+    <link href="./index.css" rel="stylesheet" type="text/css">
     <script src="./j.js"></script>
   </head>
   <body>
-    <div class="content main">
-      <div class="header">
-        <h1>CanvOS 2</h1>
-      </div>
-      <div class="body">
-        <button id="launch">Launch CanvOS 2</button>
+    <div class="header">
+      <h1>CanvOS 2</h1>
+    </div>
+    <div class="body">
+      <div class="inbody">
+        <div class="h-strech">
+          <div class="h-box">
+            <abbr title="Launch CanvOS 2"><button id="launch">Launch CanvOS</button></abbr>
+          </div>
+          <div class="h-box">
+            <abbr title="Open the debug console for CanvOS 2"><button id="console">Open console</button></abbr>
+          </div>
+          <div class="h-box">
+            <abbr title="Open the CanvOS User Manual"><button id="manual">Manual</button></abbr>
+          </div>
+          <div class="h-box">
+            <abbr title="Open the CanvOS GitHub Repository"><button id="github">Github Repo</button></abbr>
+          </div>
+        </div>
       </div>
     </div>
 <script>
@@ -30,14 +43,14 @@ function frame(time) {
       if (doreopen) {
         openWin();
       } else {
-        $("#launch").html("Launch CanvOS 2");
+        $("#launch").html("Launch CanvOS");
         winex = false;
       }
     }
   } else {
     if (!winex) {
       winex = true;
-      $("#launch").html("Close CanvOS 2");
+      $("#launch").html("Close CanvOS");
     }
   }
   if (window.relink) {
@@ -58,7 +71,7 @@ function openWin() {
 function closeWin() {
   win.close();
   win = undefined;
-  $("#launch").html("Launch CanvOS 2");
+  $("#launch").html("Launch CanvOS");
   winex = false;
 }
 
@@ -68,6 +81,14 @@ $("#launch").on("click", () => {
   } else {
     closeWin();
   }
+});
+
+$("#manual").on("click", () => {
+  open("https://docs.google.com/document/d/1rXQyqDcJKOt74pPxdw4zRbT2L4rDulDRoVwh8JqtnZw/");
+});
+
+$("#github").on("click", () => {
+  open("https://github.com/creatively-stupid/canvos");
 });
 
 </script>

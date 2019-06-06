@@ -17,9 +17,24 @@ argvProperties = [
     ["bool", "-ip", false, false],
     ["bool", "-ext", false, false],
     ["bool", "-noopen", false, false],
+    ["bool", "-user", false, false],
+    ["bool", "-group", false, false],
   ]
 ];
 argvs = parseArgvs(process.argv, argvProperties);
+
+if (argvs["-user"]) {
+  argvs["-port"] = 55555;
+  argvs["-ip"] = true;
+  argvs["-ext"] = false;
+  argvs["-noopen"] = false;
+}
+if (argvs["-group"]) {
+  argvs["-port"] = 55555;
+  argvs["-ip"] = true;
+  argvs["-ext"] = true;
+  argvs["-noopen"] = true;
+}
 
 if (!argvs["-noopen"]) {
   open("http://localhost:" + argvs["-port"].toString() + "/index.html");
