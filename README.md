@@ -1,5 +1,3 @@
-<script></script>
-
 # CanvOS
 HTML / CSS / JS Desktop Environment
 
