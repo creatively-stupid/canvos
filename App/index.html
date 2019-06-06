@@ -34,10 +34,10 @@
 var win = undefined;
 var winex = false;
 var preservedData = {};
-var doreopen = false;
+var doreopen = true;
 
 function frame(time) {
-  if (win === undefined || win.screen.width === 0 ||  win.location.href === "") {
+  if (win === undefined ||  win.location.href === "" || win.screen.width === 0) {
     win = undefined;
     if (winex) {
       if (doreopen) {
