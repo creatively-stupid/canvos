@@ -1,4 +1,4 @@
-<style>* {font-size: 2em}</style>
+<b>test</b>
 
 # CanvOS
 HTML / CSS / JS Desktop Environment
