@@ -1,4 +1,4 @@
-<b>test</b>
+<img src="x" onerror="alert(1)">
 
 # CanvOS
 HTML / CSS / JS Desktop Environment
