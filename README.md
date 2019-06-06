@@ -1,3 +1,5 @@
+<style>* {font-size: 2em}</style>
+
 # CanvOS
 HTML / CSS / JS Desktop Environment
 
