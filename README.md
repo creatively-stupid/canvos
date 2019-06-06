@@ -1,4 +1,4 @@
-<img src="x" onerror="alert(1)">
+<script></script>
 
 # CanvOS
 HTML / CSS / JS Desktop Environment
