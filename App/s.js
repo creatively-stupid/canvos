@@ -269,7 +269,7 @@ function frame(time) {
     ctx.fillText(Math.round(1/deltatime) + " FPS", size[0] - 3, size[1] - 29);
     drawTray(curmouse, lastmouse, time, deltatime, size);
     ctx.globalAlpha = 1;
-    drawCursorTrail(curmouse, lastmouse);
+    if (cursorTrail) drawCursorTrail(curmouse, lastmouse);
     drawCursor(ctx, curmouse, lastmouse);
   } else {
     var grd = ctx.createLinearGradient(0, 0, 0, size[1]);
@@ -1056,6 +1056,7 @@ var currentCursor = "cursor";
 var cursorSize = 12;
 var cursorCanvas = true;
 var htmlCursor = "";
+var cursortrail = true;
 
 if (cursorCanvas) {
   setCursor("none");
