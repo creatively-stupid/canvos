@@ -1066,7 +1066,7 @@ var currentCursor = "cursor";
 var cursorSize = 12;
 var cursorCanvas = true;
 var htmlCursor = "";
-var cursorTrail = true;
+var cursorTrail = false;
 
 if (cursorCanvas) {
   setCursor("none");
