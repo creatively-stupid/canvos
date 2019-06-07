@@ -36,10 +36,12 @@ body {
   justify-content: space-between;
 }
 .h-box {
-  display: flex;
   margin-left: 1em;
   margin-right: 1em;
+}
+.v-strech {
   flex-grow: 1;
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
 }

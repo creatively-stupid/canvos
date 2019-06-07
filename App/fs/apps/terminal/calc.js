@@ -43,7 +43,7 @@ function executeMath(string) {
     //console.log(stack);
   }
   if (stack.length !== 1 && stack.length !== 0) throw new Error("unbalanced equation!");
-  return stack[0];
+  return evaluate(stack[0]);
 }
 
 function parseName(name) {
