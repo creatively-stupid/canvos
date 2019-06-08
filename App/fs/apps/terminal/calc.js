@@ -47,7 +47,7 @@ function executeMath(string) {
 }
 
 function parseName(name) {
-  var regex = /(0[0-7]+)|(0[xX][0-9a-fA-F]+)|(([1-9][0-9]*|0)(\.[0-9]+)?)|([a-zA-Z_][a-zA-Z0-9_]*)/y;
+  var regex = /(0[0-7]+)|(0[xX][0-9a-fA-F]+)|(([1-9][0-9]*|0)(\.[0-9]+)?)|([a-zA-Z][a-zA-Z0-9]*)/y;
   var match = name.match(regex);
   if (!match) throw new Error("invalid parse for " + name);
   var oct = match[1];
@@ -68,7 +68,7 @@ function parseName(name) {
 }
 
 function tokenize(string) {
-  var class0 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
+  var class0 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.";
   var class1 = [
     ["+", ""],
     ["-", ""],

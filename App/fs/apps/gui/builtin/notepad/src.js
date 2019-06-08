@@ -119,9 +119,9 @@ var r = (curmouse, lastmouse, time, deltatime, size, app, win) => {
 		} else {
 			app.ctx.fillStyle = "#ffffff";
 		}
-		var pos = getCursorPos(app.ctx, data, "\uffff", cur, app.w, app.size);
+		var pos = getCursorPos(app.ctx, data, "▓", cur, app.w, app.size);
 		var charw = app.ctx.measureText("_").width;
-		app.ctx.fillRect(charw*pos.char+1, app.size*pos.line+app.size+1, app.size / 10, app.size);
+		app.ctx.fillRect(charw*(pos.char+1)+1, app.size*pos.line+app.size+1, app.size / 10, app.size);
 	}
 	app.data = data;
 	app.cur = cur;

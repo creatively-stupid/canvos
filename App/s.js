@@ -14,12 +14,14 @@ if (linking) {
 }
 
 var canvas = document.getElementById("c");
-var ctx = canvas.getContext("2d");
+var gl = canvas.getContext("webgl");
+var canvas2 = document.createElement("canvas");
+var ctx = canvas2.getContext("2d");
 
 window.onresize = () => {
   var s = sSize();
-  canvas.width = s[0];
-  canvas.height = s[1];
+  canvas.clientWidth = canvas.width = s[0];
+  canvas.clientHeight = canvas.height = s[1];
 };
 
 // yes i use prototypes
@@ -1229,6 +1231,9 @@ function getCursorPos(ctx, text, char, pos, width, fontSize) {
       continue;
     }
 
+    if (words[i] === char) {
+      return {line: lines.length-1, char: line.length-1};
+    }
     // Check total width of line or last word
     if (ctx.measureText(lineTest).width > width) {
       // Calculate the new height
@@ -1240,16 +1245,9 @@ function getCursorPos(ctx, text, char, pos, width, fontSize) {
     } else {
       line = lineTest;
     }
-    if (words[i] === char) {
-      return {line: lines.length-1, char: line.length-1};
-    }
   }
 
   // Catch last line in-case something is left over
-  if (line.length > 0) {
-    currentY = lines.length * fontSize + fontSize;
-    lines.push({ text: line, height: currentY });
-  }
 
   throw new Error("major error induced \"my code sucks\"");
 }
