@@ -336,7 +336,7 @@ function frame(time) {
       log("msg", "\\____ \\__/\\ |   |   V   \\___/ -___/       /\"___");
       log("msg", "");
       log("msg", "Copyright (C) 2019 RedMikePumpkin / CreativelyStupid");
-      launchModal("CanvOS", "Welcome to CanvOS 2!", "", [["Ok", "close"]], 200, 50, curmouse, lastmouse, deltatime, size);
+      launchModal("CanvOS", "Welcome to CanvOS2!", "", [["Ok", "close"]], 200, 50, curmouse, lastmouse, deltatime, size);
     }
     var bgsize = imageRes(wallpaperloc);
     if (size[0] * bgsize[1] > size[1] * bgsize[0]) {
