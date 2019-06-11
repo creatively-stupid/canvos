@@ -8,10 +8,27 @@ async function Run() {
 
 }
 
+function executeShell(cmd) {
+  console.log(nestify(tokenize(cmd)));
+}
+
 // Latte used (because its fuckin amazing)
 function tokenize(string) {
-  var class0 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$";
-  var class1 = [["~", ""], ["`", ""], ["!", ""], ["%", ""], ["^", ""], ["&", "&"], ["*", "*=/"], ["(", ""], [")", ""], ["-", "-+="], ["+", "+-="], ["=", "=>"], ["{", ""], ["}", ""], ["[", ""], ["]", ""], ["|", "|"], ["\\", ""], [":", ""], [";", ""], ["\"", ""], ["'", ""], ["<", "<="], [">", ">="], [",", ""], [".", ""], ["/", "/=*"], ["?", ""]];
+  var class0 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~`!@#$%*_-+=:;<,.?";
+  var class1 = [
+    ["[", ""],
+    ["]", ""],
+    ["(", ""],
+    [")", ""],
+    [">", ""],
+    ["\"", ""],
+    ["'", ""],
+    ["'", ""],
+    ["&", "|"],
+    ["|", ""],
+    ["^", ">"],
+    ["/", ""],
+  ];
   var class2 = " \t\n";
   var classify = (char) => {
     if (class0.indexOf(char) >= 0) {return 0;}
@@ -25,6 +42,11 @@ function tokenize(string) {
   for (var i = 0, len = string.length; i < len; i++) {
     var newChar = string[i];
     var newClass = classify(newChar);
+    if (newChar === "\") {
+      newClass = 0;
+      i++;
+      newChar = string[i];
+    }
     if (newClass != currentClass) {
       switch (newClass) {
         case 0:
@@ -165,38 +187,6 @@ function nestify(tokens) {
             nestIds.pop();
             //console.log("]");
           } else throw new Error("Unbalanced []!");
-        } else if (token === "{") {
-          nest += "{";
-          currentObj().push({
-            type: "bracket",
-            value: "{}",
-            inside: []
-          });
-          nestIds.push(currentObj().length - 1);
-          //console.log("{");
-        } else if (token === "}") {
-          if (nest[nest.length - 1] === "{") {
-            nest = nest.slice(0, -1);
-            nestIds.pop();
-            //console.log("}");
-          } else throw new Error("Unbalanced {}!");
-        } else if (token === "<<") {
-          if (tokens[i-1][0] === "Function") {
-            nest += "<";
-            currentObj().push({
-              type: "bracket",
-              value: "<>",
-              inside: []
-            });
-            nestIds.push(currentObj().length - 1);
-            //console.log("<");
-          }
-        } else if (token === ">>") {
-          if (nest[nest.length - 1] === "<") {
-            nest = nest.slice(0, -1);
-            nestIds.pop();
-            //console.log(">");
-          }
         } else {
           if (["\"", "'"].indexOf(nest[nest.length - 1]) === -1) {
             currentObj().push({

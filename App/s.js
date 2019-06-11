@@ -108,6 +108,7 @@ if (linking) {
   if (!window.link) window.close();
   if (window.link[1]) {
     preservedData = window.link[1];
+    extconsolelog = preservedData.log;
   }
   window.link[0].link = [window, preservedData];
 }
@@ -119,8 +120,8 @@ var ctx = canvas2.getContext("2d");
 
 window.onresize = () => {
   var s = sSize();
-  canvas.clientWidth = canvas.width = s[0];
-  canvas.clientHeight = canvas.height = s[1];
+  canvas2.width = canvas.width = s[0];
+  canvas2.height = canvas.height = s[1];
 };
 
 // yes i use prototypes
@@ -377,7 +378,7 @@ function frame(time) {
       startMenuScrollTo = 1 - startMenuScrollTo;
     }
     ctx.textAlign = "right";
-    ctx.fillText(Math.round(1/deltatime) + " FPS", size[0] - 3, size[1] - 29);
+    ctx.fillText((Math.round(10/deltatime)/10).toString() + " FPS", size[0] - 3, size[1] - 29);
     drawTray(curmouse, lastmouse, time, deltatime, size);
     ctx.globalAlpha = 1;
     if (cursorTrail) drawCursorTrail(curmouse, lastmouse);
@@ -425,7 +426,7 @@ function frame(time) {
   }
   updateMouse();
   Keyboard.update();
-  ctxscr.drawImage(canvas2, 0, 0, size[0], size[1]);
+  ctxscr.drawImage(canvas2, 0, 0);
   if (running) requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
