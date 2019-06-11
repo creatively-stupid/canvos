@@ -425,6 +425,7 @@ function frame(time) {
   }
   updateMouse();
   Keyboard.update();
+  ctxscr.drawImage(canvas2, 0, 0, size[0], size[1]);
   if (running) requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
