@@ -1,3 +1,102 @@
+// Leave this file now, before it's too late
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var consolelog = "";
 var extconsolelog = [];
 var displayconsole = false;
@@ -14,7 +113,7 @@ if (linking) {
 }
 
 var canvas = document.getElementById("c");
-var gl = canvas.getContext("webgl");
+var ctxscr = canvas.getContext("2d");
 var canvas2 = document.createElement("canvas");
 var ctx = canvas2.getContext("2d");
 
