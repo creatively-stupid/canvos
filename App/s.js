@@ -428,10 +428,10 @@ function frame(time) {
   }
   updateMouse();
   Keyboard.update();
-  //ctxscr.drawImage(canvas2, 0, 0);
-  cube_rotation++;
+  cube_rotation+=deltatime*36;
   ctxscr.clearRect(0, 0, size[0], size[1]);
-  drawCube(cube_rotation);
+  drawCube(ctxscr, cube_rotation);
+  //ctxscr.drawImage(canvas2, 0, 0);
   if (running) requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
@@ -1673,6 +1673,18 @@ class Point2D {
       Math.cos(a)*(this.y-o.y)+Math.sin(a)*(this.x-o.x)+o.y
     );
   }
+  translate(o) {
+    return new Point3d(
+      this.x + o.x,
+      this.y + o.y
+    );
+  }
+  scale(o) {
+    return new Point3d(
+      this.x * o.x,
+      this.y * o.y
+    );
+  }
 }
 
 class Point3D {
@@ -1707,6 +1719,20 @@ class Point3D {
         );
     }
   }
+  translate(o) {
+    return new Point3d(
+      this.x + o.x,
+      this.y + o.y,
+      this.z + o.z
+    );
+  }
+  scale(o) {
+    return new Point3d(
+      this.x * o.x,
+      this.y * o.y,
+      this.z * o.z
+    );
+  }
 }
 
 class Tri2D {
@@ -1729,13 +1755,22 @@ class Tri2D {
       this.p3.rotateAround(o, a)
     );
   }
-  orientation() {
-    var val = (this.p2.y - this.p1.y) * (this.p3.x - this.p2.x) - (this.p2.x - this.p1.x) * (this.p3.y - this.p2.y);
-
-    if (val === 0) return 0;  // colinear
-
-    return (val > 0)? 1: 2; // clock or counterclock wise
+  translate(o) {
+    return new Tri2D(
+      this.p1.translate(o),
+      this.p2.translate(o),
+      this.p3.translate(o)
+    )
   }
+  scale(o) {
+    return new Tri2D(
+      this.p1.scale(o),
+      this.p2.scale(o),
+      this.p3.scale(o)
+    )
+  }
+  // yes one liner
+  orientation() {var a=this;return Math.sign((a.p2.y-a.p1.y)*(a.p3.x-a.p2.x)-(a.p2.x-a.p1.x)*(a.p3.y-a.p2.y))%3}
 }
 
 class Tri3D {
@@ -1757,6 +1792,20 @@ class Tri3D {
       this.p2.rotateAround(o, a, x),
       this.p3.rotateAround(o, a, x)
     );
+  }
+  translate(o) {
+    return new Tri2D(
+      this.p1.translate(o),
+      this.p2.translate(o),
+      this.p3.translate(o)
+    )
+  }
+  scale(o) {
+    return new Tri2D(
+      this.p1.scale(o),
+      this.p2.scale(o),
+      this.p3.scale(o)
+    )
   }
   inCamera() {
     return this.p1.z > 0 || this.p2.z > 0 || this.p3.z > 0;
@@ -1849,10 +1898,9 @@ var cube = [
   ),
 ];
 
-ctxscr.strokeStyle = "#fff";
-ctxscr.fillStyle = "#f00";
-function drawCube(rot) {
-  var n = 0;
+function drawCube(c, rot) {
+  c.strokeStyle = "#fff";
+  c.fillStyle = "#f00";
   for (var i = 0, len = cube.length; i < len; i++) {
     var tri = cube[i];
     tri = tri.rotateAround(new Point3D(0, 0, 2.5), rot * Math.PI / 180, "x")
@@ -1861,8 +1909,6 @@ function drawCube(rot) {
     if (!tri.inCamera()) continue; // tri is outside camera
     tri = tri.cast(cam);
     if (tri.orientation() !== 1) continue; // tri on back side
-    drawTriangle(ctxscr, tri.toScreen(sSize()[1], -sSize()[1]), sSize());
-    n++;
+    drawTriangle(c, tri.toScreen(sSize()[1], -sSize()[1]), sSize());
   }
-  console.log(n);
 }
