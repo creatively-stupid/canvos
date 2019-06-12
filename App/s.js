@@ -148,7 +148,7 @@ function sSize() {
 
 console.olog=console.log;console.log=(...a)=>{console.olog(...a);consolelog+=a.join(" ")+"\n"}
 function log(command, data) {
-  extconsolelog.push([command, data]);
+  if (extconsolelog) extconsolelog.push([command, data]);
 }
 /* /""""  __   . __  .   . /"""\ /"""-       /"""\
 * |     /  \  |/  |  \ /  |   | '---.         _-'
@@ -298,6 +298,8 @@ function drawCursorTrail(curmouse, lastmouse) {
 
 var running = true;
 
+var cube_rotation = 0;
+
 function frame(time) {
   if (linking) {
     if (window.link === undefined) { // app reloaded and lost connection
@@ -426,7 +428,10 @@ function frame(time) {
   }
   updateMouse();
   Keyboard.update();
-  ctxscr.drawImage(canvas2, 0, 0);
+  //ctxscr.drawImage(canvas2, 0, 0);
+  cube_rotation++;
+  ctxscr.clearRect(0, 0, size[0], size[1]);
+  drawCube(cube_rotation);
   if (running) requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
@@ -1649,4 +1654,215 @@ function toFixed(x) {
 function randomLen(c) {
   if (c < 2) return '';
   return Math.floor(Math.random()*10).toString() + randomLen(c - 1);
+}
+
+class Point2D {
+  constructor(x, y) {
+    this.x = x || 0;
+    this.y = y || 0;
+  }
+  toScreen(w, h) {
+    return new Point2D(
+      this.x*w,
+      this.y*h
+    );
+  }
+  rotateAround(o, a) {
+    return new Point2D(
+      Math.cos(a)*(this.z-o.z)-Math.sin(a)*(this.y-o.y)+o.x,
+      Math.cos(a)*(this.y-o.y)+Math.sin(a)*(this.x-o.x)+o.y
+    );
+  }
+}
+
+class Point3D {
+  constructor(x, y, z) {
+    this.x = x || 0;
+    this.y = y || 0;
+    this.z = z || 0;
+  }
+  cast(c, o) {
+    var s = o ? 1 : c.d / this.z;
+    return new Point2D(this.x * s, this.y * s);
+  }
+  rotateAround(o, a, x) {
+    switch(x) {
+      case "x":
+        return new Point3D(
+          this.x,
+          Math.cos(a)*(this.y-o.y)-Math.sin(a)*(this.z-o.z)+o.y,
+          Math.cos(a)*(this.z-o.z)+Math.sin(a)*(this.y-o.y)+o.z
+        );
+      case "y":
+        return new Point3D(
+          Math.cos(a)*(this.x-o.x)-Math.sin(a)*(this.z-o.z)+o.x,
+          this.y,
+          Math.cos(a)*(this.z-o.z)+Math.sin(a)*(this.x-o.x)+o.z
+        );
+      case "z":
+        return new Point3D(
+          Math.cos(a)*(this.x-o.x)-Math.sin(a)*(this.y-o.y)+o.x,
+          Math.cos(a)*(this.y-o.y)+Math.sin(a)*(this.x-o.x)+o.y,
+          this.z
+        );
+    }
+  }
+}
+
+class Tri2D {
+  constructor(p1, p2, p3) {
+    this.p1 = p1 || new Point2D();
+    this.p2 = p2 || new Point2D();
+    this.p3 = p3 || new Point2D();
+  }
+  toScreen(w, h) {
+    return new Tri2D(
+      this.p1.toScreen(w, h),
+      this.p2.toScreen(w, h),
+      this.p3.toScreen(w, h)
+    );
+  }
+  rotateAround(o, a) {
+    return new Tri2D(
+      this.p1.rotateAround(o, a),
+      this.p2.rotateAround(o, a),
+      this.p3.rotateAround(o, a)
+    );
+  }
+  orientation() {
+    var val = (this.p2.y - this.p1.y) * (this.p3.x - this.p2.x) - (this.p2.x - this.p1.x) * (this.p3.y - this.p2.y);
+
+    if (val === 0) return 0;  // colinear
+
+    return (val > 0)? 1: 2; // clock or counterclock wise
+  }
+}
+
+class Tri3D {
+  constructor(p1, p2, p3) {
+    this.p1 = p1 || new Point3D();
+    this.p2 = p2 || new Point3D();
+    this.p3 = p3 || new Point3D();
+  }
+  cast(c, o) {
+    return new Tri2D(
+      this.p1.cast(c, o),
+      this.p2.cast(c, o),
+      this.p3.cast(c, o)
+    );
+  }
+  rotateAround(o, a, x) {
+    return new Tri3D(
+      this.p1.rotateAround(o, a, x),
+      this.p2.rotateAround(o, a, x),
+      this.p3.rotateAround(o, a, x)
+    );
+  }
+  inCamera() {
+    return this.p1.z > 0 || this.p2.z > 0 || this.p3.z > 0;
+  }
+}
+
+class Camera3D {
+  constructor(d) {
+    this.d = d | 1;
+  }
+}
+
+function drawTriangle(c, tri, sz) {
+  c.beginPath();
+  c.moveTo(tri.p1.x+sz[0]/2, tri.p1.y+sz[1]/2);
+  c.lineTo(tri.p2.x+sz[0]/2, tri.p2.y+sz[1]/2);
+  c.lineTo(tri.p3.x+sz[0]/2, tri.p3.y+sz[1]/2);
+  c.lineTo(tri.p1.x+sz[0]/2, tri.p1.y+sz[1]/2);
+  c.fill();
+  c.stroke();
+}
+
+var cam = new Camera3D(1);
+var cube = [
+  // front
+  new Tri3D(
+    new Point3D(-0.5,  0.5, 2),
+    new Point3D( 0.5,  0.5, 2),
+    new Point3D( 0.5, -0.5, 2)
+  ),
+  new Tri3D(
+    new Point3D(-0.5, -0.5, 2),
+    new Point3D(-0.5,  0.5, 2),
+    new Point3D( 0.5, -0.5, 2)
+  ),
+  // back
+  new Tri3D(
+    new Point3D( 0.5,  0.5, 3),
+    new Point3D(-0.5,  0.5, 3),
+    new Point3D( 0.5, -0.5, 3)
+  ),
+  new Tri3D(
+    new Point3D(-0.5,  0.5, 3),
+    new Point3D(-0.5, -0.5, 3),
+    new Point3D( 0.5, -0.5, 3)
+  ),
+  // top
+  new Tri3D(
+    new Point3D(-0.5,  0.5, 3),
+    new Point3D( 0.5,  0.5, 3),
+    new Point3D( 0.5,  0.5, 2)
+  ),
+  new Tri3D(
+    new Point3D(-0.5,  0.5, 2),
+    new Point3D(-0.5,  0.5, 3),
+    new Point3D( 0.5,  0.5, 2)
+  ),
+  // bottom
+  new Tri3D(
+    new Point3D( 0.5, -0.5, 3),
+    new Point3D(-0.5, -0.5, 3),
+    new Point3D( 0.5, -0.5, 2)
+  ),
+  new Tri3D(
+    new Point3D(-0.5, -0.5, 3),
+    new Point3D(-0.5, -0.5, 2),
+    new Point3D( 0.5, -0.5, 2)
+  ),
+  // left
+  new Tri3D(
+    new Point3D(-0.5,  0.5, 3),
+    new Point3D(-0.5,  0.5, 2),
+    new Point3D(-0.5, -0.5, 3)
+  ),
+  new Tri3D(
+    new Point3D(-0.5, -0.5, 2),
+    new Point3D(-0.5, -0.5, 3),
+    new Point3D(-0.5,  0.5, 2)
+  ),
+  // right
+  new Tri3D(
+    new Point3D( 0.5,  0.5, 2),
+    new Point3D( 0.5,  0.5, 3),
+    new Point3D( 0.5, -0.5, 3)
+  ),
+  new Tri3D(
+    new Point3D( 0.5, -0.5, 3),
+    new Point3D( 0.5, -0.5, 2),
+    new Point3D( 0.5,  0.5, 2)
+  ),
+];
+
+ctxscr.strokeStyle = "#fff";
+ctxscr.fillStyle = "#f00";
+function drawCube(rot) {
+  var n = 0;
+  for (var i = 0, len = cube.length; i < len; i++) {
+    var tri = cube[i];
+    tri = tri.rotateAround(new Point3D(0, 0, 2.5), rot * Math.PI / 180, "x")
+      .rotateAround(new Point3D(0, 0, 2.5), rot * 0.3 * Math.PI / 180, "y")
+      .rotateAround(new Point3D(0, 0, 2.5), rot * 0.7 * Math.PI / 180, "z")
+    if (!tri.inCamera()) continue; // tri is outside camera
+    tri = tri.cast(cam);
+    if (tri.orientation() !== 1) continue; // tri on back side
+    drawTriangle(ctxscr, tri.toScreen(sSize()[1], -sSize()[1]), sSize());
+    n++;
+  }
+  console.log(n);
 }

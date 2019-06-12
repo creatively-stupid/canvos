@@ -8,12 +8,12 @@ async function Run() {
 
 }
 
-function executeShell(cmd) {
-  console.log(nestify(tokenize(cmd)));
+function csh_executeShell(cmd) {
+  console.log(csh_nestify(csh_tokenize(cmd)));
 }
 
 // Latte used (because its fuckin amazing)
-function tokenize(string) {
+function csh_tokenize(string) {
   var class0 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~`!@#$%*_-+=:;<,.?";
   var class1 = [
     ["[", ""],
@@ -42,10 +42,10 @@ function tokenize(string) {
   for (var i = 0, len = string.length; i < len; i++) {
     var newChar = string[i];
     var newClass = classify(newChar);
-    if (newChar === "\") {
+    if (newChar === "\\") {
       newClass = 0;
       i++;
-      newChar = string[i];
+      newChar = "\\" + string[i];
     }
     if (newClass != currentClass) {
       switch (newClass) {
@@ -88,7 +88,7 @@ function tokenize(string) {
   }
   return (l=>{for(var i=0,r=[];i<l[0].length;i++)r.push([l[0][i],l[1][i]]);return r})([tokenList,classList]);
 }
-function nestify(tokens) {
+function csh_nestify(tokens) {
   var nest = "";
   var nestIds = [];
   var nestObj = [];
@@ -194,7 +194,7 @@ function nestify(tokens) {
               value: token
             });
           } else {
-            currentObj()[0].value += token;
+            currentObj()[0].value += csh_parseEscapes(token);
           }
         }
       } else {
@@ -204,7 +204,7 @@ function nestify(tokens) {
             value: token
           });
         } else {
-          currentObj()[0].value += token;
+          currentObj()[0].value += csh_parseEscapes(token);
         }
       }
     } else if (tokenType === 2) {
@@ -214,7 +214,7 @@ function nestify(tokens) {
           value: token
         });
       } else {
-        currentObj()[0].value += token;
+        currentObj()[0].value += csh_parseEscapes(token);
       }
     } else {
       if (["\"", "'"].indexOf(nest[nest.length - 1]) === -1) {
@@ -223,10 +223,39 @@ function nestify(tokens) {
           value: token
         });
       } else {
-        currentObj()[0].value += token;
+        currentObj()[0].value += csh_parseEscapes(token);
       }
     }
   }
   if (nest !== "") throw new Error("Unbalanced Brackets!");
   return nestObj;
+}
+
+function csh_parseEscapes(token) {
+  console.log("string!");
+  // check for escapes
+  for (var i = 0, len = token.length; i < len; i++) {
+    if (token[i] === "\\") { // found backslash
+      var escchar = token[i + 1];
+      if (escchar === "x" || escchar === "X") { // hex escape
+        console.log("esc!");
+        var id = parseInt(token[i + 2] + token[i + 3], 16);
+        var char = String.fromCharCode(id);
+        var spliceSlice = (str, index, count, add) => {
+          if (index < 0) {
+            index = str.length + index;
+            if (index < 0) {
+              index = 0;
+            }
+          }
+          return str.slice(0, index) + (add || "") + str.slice(index + count);
+        }
+        token = spliceSlice(token, i, 4, char);
+      }
+      if (escchar === "u" || escchar === "u") { // uni escape
+        var id = parseInt(token[i + 2] + token[i + 3] + token[i + 4] + token[i + 5], 16);
+      }
+    }
+  }
+  return token;
 }
