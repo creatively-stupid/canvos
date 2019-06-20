@@ -3,6 +3,11 @@
   margin: 0;
   color: #fff;
   font-family: mono;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 body {
   background-color: #111;
@@ -132,9 +137,49 @@ h1 {
   .h-box {
     margin: 0;
   }
+  .v-box {
+    margin: 0;
+  }
 }
 @media (max-width: 600px) {
-  button {
+  .font.font-2em {
     font-size: 1.5em;
   }
+  .font.font-1-5em {
+    font-size: 1.125em;
+  }
+}
+
+.qrcode-spacer {
+  padding: 3em 0;
+  width: 100%;
+}
+
+.qrcode {
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 50%;
+  height: auto;
+  font-size: 1.5em;
+}
+
+#qrcode {
+  display: block;
+  opacity: 1;
+  transition-duration: 0.5s;
+  width: 100%;
+  height: auto;
+  image-rendering: optimizeSpeed;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: -o-crisp-edges;
+  image-rendering: pixelated;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+
+#showhide:hover {
+  text-decoration: underline;
 }

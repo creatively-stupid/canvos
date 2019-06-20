@@ -113,6 +113,8 @@ if (linking) {
   window.link[0].link = [window, preservedData];
 }
 
+var socket = io(location.protocol + "//" + location.hostname + ":1337/");
+
 var canvas = document.getElementById("c");
 var ctxscr = canvas.getContext("2d");
 var canvas2 = document.createElement("canvas");
@@ -217,6 +219,10 @@ loadAllFiles(() => {
 
 var startMenuScroll = 1;
 var startMenuScrollTo = 1;
+var startMenuRot = 0;
+var startMenuRotTo = 0;
+var startMenuPage = 0;
+var startMenuAllignment = 0;
 var loadBarPos = 0;
 var loadBarPosTo = 0;
 var loadTimeOut = 0.5;
@@ -298,8 +304,6 @@ function drawCursorTrail(curmouse, lastmouse) {
 
 var running = true;
 
-var cube_rotation = 0;
-
 function frame(time) {
   if (linking) {
     if (window.link === undefined) { // app reloaded and lost connection
@@ -350,9 +354,43 @@ function frame(time) {
 
     processApps(curmouse, lastmouse, time, deltatime, size);
 
+    if (startMenuScrollTo === 0) {
+      if (Keyboard.getDown("ArrowLeft")) {
+        startMenuPage--;
+        if (startMenuPage < 0) startMenuPage = 0;
+        startMenuAllignment = 0;
+      }
+      if (Keyboard.getDown("ArrowRight")) {
+        startMenuPage++;
+        startMenuAllignment = 2 - startMenuAllignment;
+      }
+    }
+
+    startMenuRotTo = startMenuPage * Math.PI / 2;
     startMenuScroll = lerp(startMenuScroll, startMenuScrollTo, deltatime/0.25, 0, 1);
+    startMenuRot = lerpUnclamped(startMenuRot, startMenuRotTo, deltatime/0.25);
     ctx.fillStyle = "#00f";
-    ctx.fillRect(0, 0, (size[0]/2) * (1-startMenuScroll), size[1]-32);
+    //ctx.fillRect(0, 0, (size[0]/2) * (1-startMenuScroll), size[1]-32);
+    var cube_rotation = startMenuScroll * Math.PI / 2 - 0.0001;
+    var cubetris = cubeMesh.render(ctx, (tri) => {
+      return tri
+      .multiply(
+        new Matrix4x4(
+          new Vector4(Math.cos(startMenuRot), 0, Math.sin(startMenuRot), 0.5),
+          new Vector4(0, 1, 0, 0),
+          new Vector4(-Math.sin(startMenuRot), 0, Math.cos(startMenuRot), -0.5),
+          new Vector4(0, 0, 0, 1)
+        )
+      )
+      .multiply(
+        new Matrix4x4(
+          new Vector4(Math.cos(cube_rotation)*1.5, 0, Math.sin(cube_rotation), 0),
+          new Vector4(0, 3*size[1]/size[0], 0, 0),
+          new Vector4(-Math.sin(cube_rotation), 0, Math.cos(cube_rotation), 2.5),
+          new Vector4(0, 0, 0, 1)
+        )
+      );
+    }, 0, size[1]/2, size[0]/2, size[0]/2);
     ctx.fillStyle = "#000";
     ctx.fillRect(size[0] * 2 * startMenuScroll, 0, size[0], 64);
     ctx.font = "400 30px seg";
@@ -363,13 +401,30 @@ function frame(time) {
     ctx.fillText(("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2), size[0] * (1-startMenuScroll)-size[0]/2, 32);
     ctx.font = "900 30px serf";
     ctx.fillText("Start Menu", size[0] * (1-startMenuScroll)-3*size[0]/4, 32);
-
     var exapps = fs.seek("apps/gui/builtin/").getFiles();
+    var mw = Math.max(...(tris => {
+      var a = [];
+      tris.forEach(tri => {
+        a.push(tri.p1.x);
+        a.push(tri.p2.x);
+        a.push(tri.p3.x);
+      });
+      return a;
+    })(cubetris));
+    if (mw < 1) mw = 1;
+    passCanvas.width = mw;
+    passCanvas.height = size[1];
+    passCanvasctx.textBaseline = "top";
     for (var i = 0; i < exapps.length; i++) {
-      drawButton(files["fs/apps/gui/builtin/" + exapps[i] + "/"].n, size[0] * (1-startMenuScroll-1)/2+5, 133 + i * 32, size[0]/2-10, 32, () => {
-        launchApp("fs/apps/gui/builtin/" + exapps[i] + "/", curmouse, lastmouse, time, deltatime, size);
-      }, curmouse, lastmouse);
+      passCanvasctx.textAlign = "center";
+      passCanvasctx.font = "900 90px serf";
+      passCanvasctx.fillText(files["fs/apps/gui/builtin/" + exapps[i] + "/"].n, size[0] * (-startMenuScroll-(startMenuRot)*2/Math.PI+i+0.5)/2+5, 69);
+      passCanvasctx.font = "900 30px serf";
     }
+    drawButton("Launch App", size[0] * (-startMenuScroll)/2+5, size[1]-69, size[0]/2-10, 32, () => {
+      launchApp("fs/apps/gui/builtin/" + exapps[startMenuPage] + "/", curmouse, lastmouse, time, deltatime, size);
+    }, curmouse, lastmouse);
+    ctx.drawImage(passCanvas, 0, 0);
     ctx.globalAlpha = 1;
     drawImage("startbar.png", 0, size[1] - 32, size[0], 32);
     ctx.fillStyle = (curmouse[2] && inBox(curmouse[0], curmouse[1], 2, size[1] - 30, 70, 28)) ? "#9f9fff" : "#7f7fff";
@@ -428,15 +483,36 @@ function frame(time) {
   }
   updateMouse();
   Keyboard.update();
-  cube_rotation+=deltatime*36;
-  ctxscr.clearRect(0, 0, size[0], size[1]);
-  drawCube(ctxscr, cube_rotation);
-  //ctxscr.drawImage(canvas2, 0, 0);
+  //ctxscr.clearRect(0, 0, size[0], size[1]);
+  ctxscr.drawImage(canvas2, 0, 0);
   if (running) requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
 function drawButton(l, x, y, w, h, p, cm, lm) {
+  ctx.fillStyle = (cm[2] && inBox(cm[0], cm[1], x, y, w, h)) ? "#9f9fff" : "#7f7fff";
+  if (!cm[2] && lm[2] && inBox(cm[0], cm[1], x, y, w, h)) {
+    p();
+  }
+  ctx.strokeStyle = "#000";
+  ctx.lineJoin = "miter";
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x+w-10,y);
+  ctx.lineTo(x+w,y+10);
+  ctx.lineTo(x+w,y+h);
+  ctx.lineTo(x,y+h);
+  ctx.lineTo(x,y);
+  ctx.fill();
+  ctx.stroke();
+  ctx.font = "900 30px serf";
+  ctx.fillStyle = "#000";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  ctx.fillText(l, x+2, y+3);
+}
+
+function drawCtxButton(ctx, l, x, y, w, h, p, cm, lm) {
   ctx.fillStyle = (cm[2] && inBox(cm[0], cm[1], x, y, w, h)) ? "#9f9fff" : "#7f7fff";
   if (!cm[2] && lm[2] && inBox(cm[0], cm[1], x, y, w, h)) {
     p();
@@ -479,7 +555,7 @@ function drawGlobalButton(app, l, x, y, w, h, p, cm, lm) {
   uctx.fillStyle = "#000";
   uctx.textBaseline = "top";
   uctx.textAlign = "left";
-  uctx.fillText(l, x+2, y+2);
+  uctx.fillText(l, x+2, y+3);
 }
 
 function drawGrid(size, textwidth) {
@@ -650,7 +726,7 @@ function launchApp(app, curmouse, lastmouse, time, deltatime, size) {
   apps.push(clone(files[app]));
   var id = apps.length - 1;
   appOrder.push(id);
-  console.log(apps);
+  if (!apps[id]) throw new Error("app " + app + " doesnt exist!");
   apps[id].canvas = document.createElement("canvas");
   apps[id].canvas.width = apps[id].w;
   apps[id].canvas.height = apps[id].h;
@@ -1552,6 +1628,7 @@ async function delay(ms) {
 }
 
 async function error(m, s, l, c) {
+  var ctx = ctxscr;
   setCursor("default");
   window.onresize = null;
   window.onkeydown = null;
@@ -1656,6 +1733,51 @@ function randomLen(c) {
   return Math.floor(Math.random()*10).toString() + randomLen(c - 1);
 }
 
+class Vector4 {
+  constructor(x1, x2, x3, x4) {
+    this.x1 = x1 !== undefined ? x1 : 1;
+    this.x2 = x2 !== undefined ? x2 : 1;
+    this.x3 = x3 !== undefined ? x3 : 1;
+    this.x4 = x4 !== undefined ? x4 : 1;
+  }
+  multiply(m) {
+    return new Vector4(
+      m.x11 * this.x1 + m.x12 * this.x2 + m.x13 * this.x3 + m.x14 * this.x4,
+      m.x21 * this.x1 + m.x22 * this.x2 + m.x23 * this.x3 + m.x24 * this.x4,
+      m.x31 * this.x1 + m.x32 * this.x2 + m.x33 * this.x3 + m.x34 * this.x4,
+      m.x41 * this.x1 + m.x42 * this.x2 + m.x43 * this.x3 + m.x44 * this.x4
+    );
+  }
+  toPoint3D() {
+    return new Point3D(
+      this.x1,
+      this.x2,
+      this.x3
+    );
+  }
+}
+
+class Matrix4x4 {
+  constructor(x1, x2, x3, x4) {
+    this.x11 = x1.x1 !== undefined ? x1.x1 : 1;
+    this.x12 = x1.x2 !== undefined ? x1.x2 : 0;
+    this.x13 = x1.x3 !== undefined ? x1.x3 : 0;
+    this.x14 = x1.x4 !== undefined ? x1.x4 : 0;
+    this.x21 = x2.x1 !== undefined ? x2.x1 : 0;
+    this.x22 = x2.x2 !== undefined ? x2.x2 : 1;
+    this.x23 = x2.x3 !== undefined ? x2.x3 : 0;
+    this.x24 = x2.x4 !== undefined ? x2.x4 : 0;
+    this.x31 = x3.x1 !== undefined ? x3.x1 : 0;
+    this.x32 = x3.x2 !== undefined ? x3.x2 : 0;
+    this.x33 = x3.x3 !== undefined ? x3.x3 : 1;
+    this.x34 = x3.x4 !== undefined ? x3.x4 : 0;
+    this.x41 = x4.x1 !== undefined ? x4.x1 : 0;
+    this.x42 = x4.x2 !== undefined ? x4.x2 : 0;
+    this.x43 = x4.x3 !== undefined ? x4.x3 : 0;
+    this.x44 = x4.x4 !== undefined ? x4.x4 : 1;
+  }
+}
+
 class Point2D {
   constructor(x, y) {
     this.x = x || 0;
@@ -1667,20 +1789,20 @@ class Point2D {
       this.y*h
     );
   }
-  rotateAround(o, a) {
+  rotate(a) {
     return new Point2D(
-      Math.cos(a)*(this.z-o.z)-Math.sin(a)*(this.y-o.y)+o.x,
-      Math.cos(a)*(this.y-o.y)+Math.sin(a)*(this.x-o.x)+o.y
+      Math.cos(a)*(this.x)-Math.sin(a)*(this.y),
+      Math.cos(a)*(this.y)+Math.sin(a)*(this.x)
     );
   }
   translate(o) {
-    return new Point3d(
+    return new Point2D(
       this.x + o.x,
       this.y + o.y
     );
   }
   scale(o) {
-    return new Point3d(
+    return new Point2D(
       this.x * o.x,
       this.y * o.y
     );
@@ -1689,57 +1811,29 @@ class Point2D {
 
 class Point3D {
   constructor(x, y, z) {
-    this.x = x || 0;
-    this.y = y || 0;
-    this.z = z || 0;
+    this.x = x !== undefined ? x : 0;
+    this.y = y !== undefined ? y : 0;
+    this.z = z !== undefined ? z : 0;
   }
   cast(c, o) {
     var s = o ? 1 : c.d / this.z;
     return new Point2D(this.x * s, this.y * s);
   }
-  rotateAround(o, a, x) {
-    switch(x) {
-      case "x":
-        return new Point3D(
-          this.x,
-          Math.cos(a)*(this.y-o.y)-Math.sin(a)*(this.z-o.z)+o.y,
-          Math.cos(a)*(this.z-o.z)+Math.sin(a)*(this.y-o.y)+o.z
-        );
-      case "y":
-        return new Point3D(
-          Math.cos(a)*(this.x-o.x)-Math.sin(a)*(this.z-o.z)+o.x,
-          this.y,
-          Math.cos(a)*(this.z-o.z)+Math.sin(a)*(this.x-o.x)+o.z
-        );
-      case "z":
-        return new Point3D(
-          Math.cos(a)*(this.x-o.x)-Math.sin(a)*(this.y-o.y)+o.x,
-          Math.cos(a)*(this.y-o.y)+Math.sin(a)*(this.x-o.x)+o.y,
-          this.z
-        );
-    }
-  }
-  translate(o) {
-    return new Point3d(
-      this.x + o.x,
-      this.y + o.y,
-      this.z + o.z
-    );
-  }
-  scale(o) {
-    return new Point3d(
-      this.x * o.x,
-      this.y * o.y,
-      this.z * o.z
-    );
+  toVector4() {
+    return new Vector4(
+      this.x,
+      this.y,
+      this.z,
+      1
+    )
   }
 }
 
 class Tri2D {
   constructor(p1, p2, p3) {
-    this.p1 = p1 || new Point2D();
-    this.p2 = p2 || new Point2D();
-    this.p3 = p3 || new Point2D();
+    this.p1 = p1 !== undefined ? p1 : new Point2D();
+    this.p2 = p2 !== undefined ? p2 : new Point2D();
+    this.p3 = p3 !== undefined ? p3 : new Point2D();
   }
   toScreen(w, h) {
     return new Tri2D(
@@ -1748,11 +1842,11 @@ class Tri2D {
       this.p3.toScreen(w, h)
     );
   }
-  rotateAround(o, a) {
+  rotate(a) {
     return new Tri2D(
-      this.p1.rotateAround(o, a),
-      this.p2.rotateAround(o, a),
-      this.p3.rotateAround(o, a)
+      this.p1.rotate(a),
+      this.p2.rotate(a),
+      this.p3.rotate(a)
     );
   }
   translate(o) {
@@ -1775,9 +1869,9 @@ class Tri2D {
 
 class Tri3D {
   constructor(p1, p2, p3) {
-    this.p1 = p1 || new Point3D();
-    this.p2 = p2 || new Point3D();
-    this.p3 = p3 || new Point3D();
+    this.p1 = p1 !== undefined ? p1 : new Point3D();
+    this.p2 = p2 !== undefined ? p2 : new Point3D();
+    this.p3 = p3 !== undefined ? p3 : new Point3D();
   }
   cast(c, o) {
     return new Tri2D(
@@ -1786,25 +1880,11 @@ class Tri3D {
       this.p3.cast(c, o)
     );
   }
-  rotateAround(o, a, x) {
+  multiply(m) {
     return new Tri3D(
-      this.p1.rotateAround(o, a, x),
-      this.p2.rotateAround(o, a, x),
-      this.p3.rotateAround(o, a, x)
-    );
-  }
-  translate(o) {
-    return new Tri2D(
-      this.p1.translate(o),
-      this.p2.translate(o),
-      this.p3.translate(o)
-    )
-  }
-  scale(o) {
-    return new Tri2D(
-      this.p1.scale(o),
-      this.p2.scale(o),
-      this.p3.scale(o)
+      this.p1.toVector4().multiply(m).toPoint3D(),
+      this.p2.toVector4().multiply(m).toPoint3D(),
+      this.p3.toVector4().multiply(m).toPoint3D()
     )
   }
   inCamera() {
@@ -1814,101 +1894,149 @@ class Tri3D {
 
 class Camera3D {
   constructor(d) {
-    this.d = d | 1;
+    this.d = d !== undefined ? d : 1;
   }
 }
 
-function drawTriangle(c, tri, sz) {
+class MeshTri {
+  constructor(p1, p2, p3, oc, fc) {
+    this.p1 = p1 !== undefined ? p1 : new Point3D();
+    this.p2 = p2 !== undefined ? p2 : new Point3D();
+    this.p3 = p3 !== undefined ? p3 : new Point3D();
+    this.oc = oc !== undefined ? oc : new Vector4(255, 255, 255, 255);
+    this.fc = fc !== undefined ? fc : new Vector4(255, 0,   0,   255);
+  }
+  tri() {
+    return new Tri3D(
+      this.p1,
+      this.p2,
+      this.p3
+    )
+  }
+}
+
+class Mesh {
+  constructor(tris) {
+    this.tris = tris !== undefined ? tris : [];
+  }
+  render(ctx, convert, x, y, w, h) {
+    var screentris = [];
+    for (var i = 0, len = this.tris.length; i < len; i++) {
+      ctx.strokeStyle = "rgba(" + this.tris[i].oc.x1 + ", " + this.tris[i].oc.x2 + ", " + this.tris[i].oc.x3 + ", " + this.tris[i].oc.x4 + ")";
+      ctx.fillStyle = "rgba(" + this.tris[i].fc.x1 + ", " + this.tris[i].fc.x2 + ", " + this.tris[i].fc.x3 + ", " + this.tris[i].fc.x4 + ")";
+      var tri = convert(this.tris[i].tri());
+      if (!tri.inCamera()) continue; // tri is outside camera
+      tri = tri.cast(cam);
+      if (tri.orientation() !== 1) continue; // tri on back side
+      tri = tri.toScreen(w, -h).translate(new Point2D(x, y))
+      drawTriangle(ctx, tri);
+      screentris.push(tri);
+    }
+    return screentris;
+  }
+}
+
+
+function drawTriangle(c, tri) {
   c.beginPath();
-  c.moveTo(tri.p1.x+sz[0]/2, tri.p1.y+sz[1]/2);
-  c.lineTo(tri.p2.x+sz[0]/2, tri.p2.y+sz[1]/2);
-  c.lineTo(tri.p3.x+sz[0]/2, tri.p3.y+sz[1]/2);
-  c.lineTo(tri.p1.x+sz[0]/2, tri.p1.y+sz[1]/2);
+  c.moveTo(tri.p1.x, tri.p1.y);
+  c.lineTo(tri.p2.x, tri.p2.y);
+  c.lineTo(tri.p3.x, tri.p3.y);
+  c.lineTo(tri.p1.x, tri.p1.y);
   c.fill();
   c.stroke();
 }
 
 var cam = new Camera3D(1);
-var cube = [
+var cubeMesh = new Mesh([
   // front
-  new Tri3D(
-    new Point3D(-0.5,  0.5, 2),
-    new Point3D( 0.5,  0.5, 2),
-    new Point3D( 0.5, -0.5, 2)
+  new MeshTri(
+    new Point3D(-0.5,  0.5, -0.5),
+    new Point3D( 0.5,  0.5, -0.5),
+    new Point3D( 0.5, -0.5, -0.5),
+    new Vector4(0,   0, 255, 255),
+    new Vector4(0,   0, 255, 255)
   ),
-  new Tri3D(
-    new Point3D(-0.5, -0.5, 2),
-    new Point3D(-0.5,  0.5, 2),
-    new Point3D( 0.5, -0.5, 2)
+  new MeshTri(
+    new Point3D(-0.5, -0.5, -0.5),
+    new Point3D(-0.5,  0.5, -0.5),
+    new Point3D( 0.5, -0.5, -0.5),
+    new Vector4(0,   0, 255, 255),
+    new Vector4(0,   0, 255, 255)
   ),
   // back
-  new Tri3D(
-    new Point3D( 0.5,  0.5, 3),
-    new Point3D(-0.5,  0.5, 3),
-    new Point3D( 0.5, -0.5, 3)
+  new MeshTri(
+    new Point3D( 0.5,  0.5,  0.5),
+    new Point3D(-0.5,  0.5,  0.5),
+    new Point3D( 0.5, -0.5,  0.5),
+    new Vector4(0,   0, 255, 255),
+    new Vector4(0,   0, 255, 255)
   ),
-  new Tri3D(
-    new Point3D(-0.5,  0.5, 3),
-    new Point3D(-0.5, -0.5, 3),
-    new Point3D( 0.5, -0.5, 3)
+  new MeshTri(
+    new Point3D(-0.5,  0.5,  0.5),
+    new Point3D(-0.5, -0.5,  0.5),
+    new Point3D( 0.5, -0.5,  0.5),
+    new Vector4(0,   0, 255, 255),
+    new Vector4(0,   0, 255, 255)
   ),
   // top
-  new Tri3D(
-    new Point3D(-0.5,  0.5, 3),
-    new Point3D( 0.5,  0.5, 3),
-    new Point3D( 0.5,  0.5, 2)
+  new MeshTri(
+    new Point3D(-0.5,  0.5,  0.5),
+    new Point3D( 0.5,  0.5,  0.5),
+    new Point3D( 0.5,  0.5, -0.5),
+    new Vector4(0,   0, 255, 255),
+    new Vector4(0,   0, 255, 255)
   ),
-  new Tri3D(
-    new Point3D(-0.5,  0.5, 2),
-    new Point3D(-0.5,  0.5, 3),
-    new Point3D( 0.5,  0.5, 2)
+  new MeshTri(
+    new Point3D(-0.5,  0.5, -0.5),
+    new Point3D(-0.5,  0.5,  0.5),
+    new Point3D( 0.5,  0.5, -0.5),
+    new Vector4(0,   0, 255, 255),
+    new Vector4(0,   0, 255, 255)
   ),
   // bottom
-  new Tri3D(
-    new Point3D( 0.5, -0.5, 3),
-    new Point3D(-0.5, -0.5, 3),
-    new Point3D( 0.5, -0.5, 2)
+  new MeshTri(
+    new Point3D( 0.5, -0.5,  0.5),
+    new Point3D(-0.5, -0.5,  0.5),
+    new Point3D( 0.5, -0.5, -0.5),
+    new Vector4(0,   0, 255, 255),
+    new Vector4(0,   0, 255, 255)
   ),
-  new Tri3D(
-    new Point3D(-0.5, -0.5, 3),
-    new Point3D(-0.5, -0.5, 2),
-    new Point3D( 0.5, -0.5, 2)
+  new MeshTri(
+    new Point3D(-0.5, -0.5,  0.5),
+    new Point3D(-0.5, -0.5, -0.5),
+    new Point3D( 0.5, -0.5, -0.5),
+    new Vector4(0,   0, 255, 255),
+    new Vector4(0,   0, 255, 255)
   ),
   // left
-  new Tri3D(
-    new Point3D(-0.5,  0.5, 3),
-    new Point3D(-0.5,  0.5, 2),
-    new Point3D(-0.5, -0.5, 3)
+  new MeshTri(
+    new Point3D(-0.5,  0.5,  0.5),
+    new Point3D(-0.5,  0.5, -0.5),
+    new Point3D(-0.5, -0.5,  0.5),
+    new Vector4(0,  64, 192, 255),
+    new Vector4(0,  64, 192, 255)
   ),
-  new Tri3D(
-    new Point3D(-0.5, -0.5, 2),
-    new Point3D(-0.5, -0.5, 3),
-    new Point3D(-0.5,  0.5, 2)
+  new MeshTri(
+    new Point3D(-0.5, -0.5, -0.5),
+    new Point3D(-0.5, -0.5,  0.5),
+    new Point3D(-0.5,  0.5, -0.5),
+    new Vector4(0,  64, 192, 255),
+    new Vector4(0,  64, 192, 255)
   ),
   // right
-  new Tri3D(
-    new Point3D( 0.5,  0.5, 2),
-    new Point3D( 0.5,  0.5, 3),
-    new Point3D( 0.5, -0.5, 3)
+  new MeshTri(
+    new Point3D( 0.5,  0.5, -0.5),
+    new Point3D( 0.5,  0.5,  0.5),
+    new Point3D( 0.5, -0.5,  0.5),
+    new Vector4(0,  64, 192, 255),
+    new Vector4(0,  64, 192, 255)
   ),
-  new Tri3D(
-    new Point3D( 0.5, -0.5, 3),
-    new Point3D( 0.5, -0.5, 2),
-    new Point3D( 0.5,  0.5, 2)
+  new MeshTri(
+    new Point3D( 0.5, -0.5,  0.5),
+    new Point3D( 0.5, -0.5, -0.5),
+    new Point3D( 0.5,  0.5, -0.5),
+    new Vector4(0,  64, 192, 255),
+    new Vector4(0,  64, 192, 255)
   ),
-];
-
-function drawCube(c, rot) {
-  c.strokeStyle = "#fff";
-  c.fillStyle = "#f00";
-  for (var i = 0, len = cube.length; i < len; i++) {
-    var tri = cube[i];
-    tri = tri.rotateAround(new Point3D(0, 0, 2.5), rot * Math.PI / 180, "x")
-      .rotateAround(new Point3D(0, 0, 2.5), rot * 0.3 * Math.PI / 180, "y")
-      .rotateAround(new Point3D(0, 0, 2.5), rot * 0.7 * Math.PI / 180, "z")
-    if (!tri.inCamera()) continue; // tri is outside camera
-    tri = tri.cast(cam);
-    if (tri.orientation() !== 1) continue; // tri on back side
-    drawTriangle(c, tri.toScreen(sSize()[1], -sSize()[1]), sSize());
-  }
-}
+]);

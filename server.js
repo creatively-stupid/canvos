@@ -7,7 +7,8 @@ var http = require('http'),
 
 var fileExtensions = JSON.parse(fs.readFileSync("./extensions.json", { encoding: "utf-8" }));
 
-var CustomError=(name="CustomError",message="")=>{Error.call(message);this.name=name;this.message=message;};CustomError.prototype=Error.prototype;
+
+var CustomError=(name="CustomError",message="")=>{Error.call(message);this.name=name;this.message=message};CustomError.prototype=Error.prototype;
 
 argvProperties = [
   [
@@ -65,17 +66,15 @@ if (argvs["-ip"]) {
   });
 }
 console.log();
-process.on('SIGINT', function() {
-    server.close();
-    console.log("\nExiting...");
-    process.exit(0);
-});
 
 module.exports.quit = () => {
   server.close();
   console.log("\nExiting...");
   process.exit(0);
 }
+process.on('SIGINT', function() {
+    module.exports.quit();
+});
 
 var lastIp = "";
 
@@ -188,6 +187,15 @@ var handleData = function(d) {
 
 stdin.addListener("data", handleData);
 
+// Socket.io
+
+io.on("connection", (socket) => {
+  process.stdout.write("\nuser connected!");
+  socket.on('disconnect', function(){
+    process.stdout.write("\nuser disconnected!");
+  });
+});
+
 function parseArgvs(argv, properties = []) {
   var pr = properties;
   var outVals = {};
@@ -201,7 +209,7 @@ function parseArgvs(argv, properties = []) {
       outVals[pr[0][i][1]] = t[1];
     } else {
       //throw new CustomError("ArgvError", "type mismatch");
-      return {"_argvError": "static ArgvTypeMismatch at " + i.toString() + " (" + JSON.stringify(argv[i]) + "). For help, contact <@!368452225988558859> because he is responsible for it."};
+      return {"_argvError": "static ArgvTypeMismatch at " + i.toString() + " (" + JSON.stringify(argv[i]) + ")."};
     }
   }
   for (var i = 0; i < pr[1].length; i++) {
@@ -216,7 +224,7 @@ function parseArgvs(argv, properties = []) {
           outVals[pr[1][i][1]] = t[1];
         } else {
           //throw new CustomError("ArgvError", "type mismatch");
-          return {"_argvError": "dynamic ArgvTypeMismatch at " + i.toString() + "/" + (i+1).toString() + " (" + argv[debugT] + " " + argv[debugT + 1] + "). " + cfgData.extras.helpmsg};
+          return {"_argvError": "dynamic ArgvTypeMismatch at " + i.toString() + "/" + (i+1).toString() + " (" + argv[debugT] + " " + argv[debugT + 1] + "). "};
         }
       }
     }

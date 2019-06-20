@@ -16,23 +16,31 @@
         <div class="h-strech">
           <div class="h-box v-strech">
             <div class="v-box">
-              <abbr title="Launch CanvOS2"><button id="launch">Launch CanvOS</button></abbr>
+              <abbr title="Launch CanvOS2"><button class="font font-2em" id="launch">Launch CanvOS</button></abbr>
             </div>
             <div class="v-box">
-              <abbr title="Open the debug console for CanvOS2"><button id="console">Open console</button></abbr>
+              <abbr title="Open the debug console for CanvOS2"><button class="font font-2em" id="console">Open console</button></abbr>
             </div>
           </div>
           <div class="h-box v-strech">
             <div class="v-box">
-              <abbr title="Open the CanvOS User Manual"><button id="manual">Manual</button></abbr>
+              <abbr title="Open the CanvOS User Manual"><button class="font font-2em" id="manual">Manual</button></abbr>
             </div>
             <div class="v-box">
-              <abbr title="Open the CanvOS GitHub Repository"><button id="github">Github Repo</button></abbr>
+              <abbr title="Open the CanvOS GitHub Repository"><button class="font font-2em" id="github">Github Repo</button></abbr>
             </div>
+          </div>
+        </div>
+        <div class="qrcode-spacer">
+          <div class="qrcode font font-1-5em">
+            <p>Scan this QR Code to access CanvOS2 on your mobile device (<span id="showhide">hide</span>)</p>
+            <canvas id="qrcode"></canvas>
           </div>
         </div>
       </div>
     </div>
+    <script src="_node_modules/qrcode/build/qrcode.min.js"></script>
+    <script src="_node_modules/qrcode-reader/dist/index.min.js"></script>
 <script>
 
 var win = undefined;
@@ -93,6 +101,45 @@ $("#manual").on("click", () => {
 
 $("#github").on("click", () => {
   open("https://github.com/creatively-stupid/canvos");
+});
+
+QRCode.toCanvas(location.origin + "/app.html?mobile", {errorCorrectionLevel: 'H'}, (err, qrcode) => {
+  if (err) throw err;
+
+  var canvas = document.getElementById("qrcode");
+  canvas.width = qrcode.width;
+  canvas.height = qrcode.height;
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(qrcode, 0, 0, canvas.width, canvas.height);
+  var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  var dataArr = imageData.data;
+
+  for(var i = 0; i < dataArr.length; i += 4)
+  {
+    var r = dataArr[i];
+
+    if (r === 255) {
+      dataArr[i+3] = 0;
+    }
+    if (r === 0) {
+      dataArr[i] =
+      dataArr[i+1] =
+      dataArr[i+2] = 200;
+    }
+
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+});
+
+$("#showhide").on("click", () => {
+  if ($("#qrcode").css("opacity") === "0") {
+    $("#qrcode").css("opacity", "1");
+    $("#showhide").html("hide");
+  } else {
+    $("#qrcode").css("opacity", "0");
+    $("#showhide").html("show");
+  }
 });
 
 </script>
