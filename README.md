@@ -13,7 +13,7 @@ Submit an issue [here](https://github.com/creatively-stupid/canvos/issues/new) i
 
 - sorry for my bad commit messages, I work on features in parallel / over many days and it makes it hard to write useful commit messages.
 
-- add apps
+- add more apps
 
   - media player
 
