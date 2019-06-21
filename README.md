@@ -11,7 +11,7 @@ Submit an issue [here](https://github.com/creatively-stupid/canvos/issues/new) i
 
 ## To-do list & Notes
 
-- sorry for my bad commit messgaes, I work on features in parallel / over many days and it makes it hard to write useful commit messages
+- sorry for my bad commit messages, I work on features in parallel / over many days and it makes it hard to write useful commit messages.
 
 - add apps
 
