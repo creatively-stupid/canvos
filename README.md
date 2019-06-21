@@ -22,7 +22,3 @@ Submit an issue [here](https://github.com/creatively-stupid/canvos/issues/new) i
   - calculator
 
 - add socket.io integration
-
-- fix server open
-
-  - possibly add "template" commands
