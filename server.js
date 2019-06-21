@@ -3,10 +3,12 @@ var http = require('http'),
   fs = require('fs'),
   os = require('os'),
   open = require("open"),
-  io = require("socket.io")(1337);
+  io = require("socket.io")(1337),
+  crypto = require("crypto-js"),
+  moment = require("moment");
 
 var fileExtensions = JSON.parse(fs.readFileSync("./extensions.json", { encoding: "utf-8" }));
-
+var userData = JSON.parse(fs.readFileSync("./users.json", { encoding: "utf-8" }));
 
 var CustomError=(name="CustomError",message="")=>{Error.call(message);this.name=name;this.message=message};CustomError.prototype=Error.prototype;
 
@@ -105,9 +107,35 @@ var server = http.createServer(function (req, res) {
     req.on('end', () => {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       var data = JSON.parse(Buffer.concat(body).toString()),
-        request = data.request;
-      data = data.data;
-
+        request = data.r;
+      data = data.d;
+      if (request === "auth") {
+        // token format visible at https://docs.google.com/drawings/d/1B10gm_paB7RiQIs6EzE1ms0pP0fvHB5vSHMJBu_mLtg/edit?usp=sharing
+        var uname = data.split(":")[0];
+        var key = data.split(":")[1];
+        var cont = true;
+        try {
+          var time = crypto.AES.decrypt(key, userData[uname].pass).toString(crypto.enc.Utf8);
+        } catch {
+          cont = false;
+        }
+        if (cont) {
+          var expireTime = moment.utc(time, "YYYY.MM.DD.HH.mm.ss");
+          var currentTime = moment.utc();
+          if (expireTime._isValid && currentTime._isValid) {
+            if (currentTime.isBefore(expireTime)) {
+              res.write("{\"loggedin\":\"true\"}");
+            } else {
+              res.write("{\"loggedin\":\"false\"}");
+            }
+          } else {
+            res.write("{\"loggedin\":\"false\"}");
+          }
+        } else {
+          res.write("{\"loggedin\":\"false\"}");
+        }
+      }
+      res.end();
     });
   } else if (req.method === "GET") {
     fs.stat(filename, function (err, stats) {

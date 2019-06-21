@@ -12,6 +12,12 @@
 body {
   background-color: #111;
 }
+.font.font-2em {
+  font-size: 2em;
+}
+.font.font-1-5em {
+  font-size: 1.5em;
+}
 .header {
   text-align: center;
   line-height: 5em;
@@ -22,6 +28,11 @@ body {
   top: 0;
   width: 100%;
   z-index: 999;
+}
+.header button#logout {
+  position: absolute;
+  top: 0.75em;
+  right: 0.75em;
 }
 .body {
   width: 50vw;
@@ -67,7 +78,7 @@ body {
 .v-box:last-child {
   margin-bottom: 0;
 }
-button {
+button, input {
   text-align: center;
   background-color: #222;
   border: 1px solid #fff;
@@ -76,22 +87,26 @@ button {
   box-shadow: 0px 0px 0px #fff;
   transition-duration: 100ms;
   animation-duration: 200ms;
+  display: block;
   transition-timing-function: ease-out;
   animation-iteration-count: 1;
   animation-timing-function: ease-out;
   outline: none;
 }
-button.small {
+button.small, input.small {
   font-size: 1em;
   height: 2em;
 }
-button:hover {
+button:hover, input:hover {
   background-color: #333;
   box-shadow: 0.3em 0.3em 0.1em #fff;
 }
-button:active {
+button:active, input:focus {
   animation-name: press;
   background-color: #444;
+}
+input {
+  text-align: left;
 }
 .v-box button {
   width: 100%;
@@ -182,4 +197,25 @@ h1 {
 
 #showhide:hover {
   text-decoration: underline;
+}
+
+.login--invalidPass {
+  color: #ff3f3f;
+  opacity: 0;
+}
+
+.login--invalidPass.invalidated {
+  opacity: 1;
+}
+
+.centertext {
+  text-align: center;
+}
+
+.textwidth {
+  width: calc(100% - 1em);
+}
+
+abbr {
+  text-decoration: none;
 }

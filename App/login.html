@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+    <title>CanvOS2</title>
+    <link href="./index.css" rel="stylesheet" type="text/css">
+    <script src="./j.js"></script>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Login to CanvOS2</h1>
+    </div>
+    <div class="body">
+      <div class="inbody">
+        <div class="v-strech">
+          <div class="v-box h-strech">
+            <div class="h-box">
+              <input class="font font-1-5em textwidth" type="text" autocomplete="off" placeholder="Username" autofocus spellcheck="false" id="username">
+            </div>
+            <div class="h-box">
+              <input class="font font-1-5em textwidth" type="password" autocomplete="off" placeholder="Password" autofocus spellcheck="false" id="userpass">
+            </div>
+          </div>
+          <div class="v-box">
+            <button class="font font-2em" id="validate">Log in</button>
+          </div>
+          <div class="v-box font font-1-5em login--invalidPass centertext">
+            &#x26A0; Invalid Username or Password!
+          </div>
+          <div class="v-box font font-1-5em centertext">
+            Ask your CanvOS operator to reset your password if you forgot it.
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="_node_modules/crypto-js/crypto-js.js"></script>
+    <script src="_node_modules/js-cookie/src/js.cookie.js"></script>
+    <script src="_node_modules/moment/moment.js"></script>
+<script>
+
+// check login status
+var token = "";
+function validate(cookieVal, yey) {
+  if (cookieVal) {
+    var parts = cookieVal.split(":");
+    if (parts && parts[0] && parts[1]) {
+      $.post("", JSON.stringify({"r":"auth","d": cookieVal}), (data) => {
+        console.log(data);
+        if (data && data.loggedin && data.loggedin === "true") {
+          token = cookieVal;
+          yey(true);
+        } else {
+          yey(false);
+        }
+      });
+    } else {
+      yey(false);
+    }
+  } else {
+    yey(false);
+  }
+}
+
+$("#validate").on("click", () => {
+  var username = $("#username").val();
+  var passhash = CryptoJS.SHA512($("#userpass").val()).toString();
+  var expirationDate = moment().startOf("day").add(1, "day").add(3, "hours").utc().format("YYYY.MM.DD.HH.mm.ss");
+  var key = CryptoJS.AES.encrypt(expirationDate, passhash).toString();
+  var ttoken = username + ":" + key;
+  validate(ttoken, (valid) => {
+    if (valid) {
+      Cookies.set("i", token);
+      location.pathname = "/index.html";
+    } else {
+      $(".login--invalidPass").removeClass("invalidated").addClass("invalidated");
+      setTimeout(() => {
+        $(".login--invalidPass").removeClass("invalidated");
+      }, 4000);
+    }
+  });
+});
+</script>
+  </body>
+</html>

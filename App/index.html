@@ -10,6 +10,7 @@
   <body>
     <div class="header">
       <h1>CanvOS2</h1>
+      <button class="font font-1-5em" id="logout">Log Out</button>
     </div>
     <div class="body">
       <div class="inbody">
@@ -41,106 +42,143 @@
     </div>
     <script src="_node_modules/qrcode/build/qrcode.min.js"></script>
     <script src="_node_modules/qrcode-reader/dist/index.min.js"></script>
+    <script src="_node_modules/crypto-js/crypto-js.js"></script>
+    <script src="_node_modules/js-cookie/src/js.cookie.js"></script>
 <script>
 
+// check login status
+var token = "";
+var cookieVal = Cookies.get("i");
+if (cookieVal) {
+  var parts = cookieVal.split(":");
+  if (parts && parts[0] && parts[1]) {
+    $.post("", JSON.stringify({"r":"auth","d": cookieVal}), (data) => {
+      if (data && data.loggedin && data.loggedin === "true") {
+        token = cookieVal;
+        main();
+        qr();
+      } else {
+        authErr();
+      }
+    });
+  } else {
+    authErr();
+  }
+} else {
+  authErr();
+}
+
+function authErr() {
+  location.pathname = "/login.html";
+}
 var win = undefined;
 var winex = false;
 var preservedData = {};
 var doreopen = false;
 
-function frame(time) {
-  if (win === undefined ||  win.location.href === "" || win.screen.width === 0) {
-    win = undefined;
-    if (winex) {
-      if (doreopen) {
-        openWin();
-      } else {
-        $("#launch").html("Launch CanvOS");
-        winex = false;
+function main() {
+
+  function frame(time) {
+    if (win === undefined ||  win.location.href === "" || win.screen.width === 0) {
+      win = undefined;
+      if (winex) {
+        if (doreopen) {
+          openWin();
+        } else {
+          $("#launch").html("Launch CanvOS");
+          winex = false;
+        }
+      }
+    } else {
+      if (!winex) {
+        winex = true;
+        $("#launch").html("Close CanvOS");
       }
     }
-  } else {
-    if (!winex) {
-      winex = true;
-      $("#launch").html("Close CanvOS");
+    if (window.relink) {
+      preservedData = window.link[1];
+      win = window.link[0];
+      window.relink = undefined;
     }
-  }
-  if (window.relink) {
-    preservedData = window.link[1];
-    win = window.link[0];
-    window.relink = undefined;
-  }
 
+    requestAnimationFrame(frame);
+  }
   requestAnimationFrame(frame);
-}
-requestAnimationFrame(frame);
 
-function openWin() {
-  win = open("app.html", "_blank", "width=1600,height=900");
-  win.link = [window, preservedData];
-}
-
-function closeWin() {
-  win.close();
-  win = undefined;
-  $("#launch").html("Launch CanvOS");
-  winex = false;
-}
-
-$("#launch").on("click", () => {
-  if (win === undefined || win.location.href === "") {
-    openWin();
-  } else {
-    closeWin();
+  function openWin() {
+    win = open("app.html?token="+encodeURIComponent(token)+"&mobile=false", "_blank", "width=1600,height=900");
+    win.link = [window, preservedData];
   }
-});
 
-$("#manual").on("click", () => {
-  open("https://docs.google.com/document/d/1rXQyqDcJKOt74pPxdw4zRbT2L4rDulDRoVwh8JqtnZw/");
-});
+  function closeWin() {
+    win.close();
+    win = undefined;
+    $("#launch").html("Launch CanvOS");
+    winex = false;
+  }
 
-$("#github").on("click", () => {
-  open("https://github.com/creatively-stupid/canvos");
-});
-
-QRCode.toCanvas(location.origin + "/app.html?mobile", {errorCorrectionLevel: 'H'}, (err, qrcode) => {
-  if (err) throw err;
-
-  var canvas = document.getElementById("qrcode");
-  canvas.width = qrcode.width;
-  canvas.height = qrcode.height;
-  var ctx = canvas.getContext("2d");
-  ctx.drawImage(qrcode, 0, 0, canvas.width, canvas.height);
-  var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  var dataArr = imageData.data;
-
-  for(var i = 0; i < dataArr.length; i += 4)
-  {
-    var r = dataArr[i];
-
-    if (r === 255) {
-      dataArr[i+3] = 0;
+  $("#launch").on("click", () => {
+    if (win === undefined || win.location.href === "") {
+      openWin();
+    } else {
+      closeWin();
     }
-    if (r === 0) {
-      dataArr[i] =
-      dataArr[i+1] =
-      dataArr[i+2] = 200;
+  });
+
+  $("#manual").on("click", () => {
+    open("https://docs.google.com/document/d/1rXQyqDcJKOt74pPxdw4zRbT2L4rDulDRoVwh8JqtnZw/");
+  });
+
+  $("#github").on("click", () => {
+    open("https://github.com/creatively-stupid/canvos");
+  });
+
+  $("#logout").on("click", () => {
+    Cookies.remove("i");
+    location.pathname = "/login.html";
+  });
+}
+
+function qr() {
+  QRCode.toCanvas(location.origin + "/app.html?token="+encodeURIComponent(token)+"&mobile=true", {errorCorrectionLevel: 'H'}, (err, qrcode) => {
+    if (err) throw err;
+
+    var canvas = document.getElementById("qrcode");
+    canvas.width = qrcode.width;
+    canvas.height = qrcode.height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(qrcode, 0, 0, canvas.width, canvas.height);
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var dataArr = imageData.data;
+
+    for(var i = 0; i < dataArr.length; i += 4)
+    {
+      var r = dataArr[i];
+
+      if (r === 255) {
+        dataArr[i+3] = 0;
+      }
+      if (r === 0) {
+        dataArr[i] =
+        dataArr[i+1] =
+        dataArr[i+2] = 200;
+      }
+
     }
 
-  }
+    ctx.putImageData(imageData, 0, 0);
+  });
 
-  ctx.putImageData(imageData, 0, 0);
-});
-
-$("#showhide").on("click", () => {
-  if ($("#qrcode").css("opacity") === "0") {
-    $("#qrcode").css("opacity", "1");
-    $("#showhide").html("hide");
-  } else {
-    $("#qrcode").css("opacity", "0");
-    $("#showhide").html("show");
-  }
-});
+  $("#showhide").on("click", () => {
+    if ($("#qrcode").css("opacity") === "0") {
+      $("#qrcode").css("opacity", "1");
+      $("#showhide").html("hide");
+    } else {
+      $("#qrcode").css("opacity", "0");
+      $("#showhide").html("show");
+    }
+  });
+}
 
 </script>
   </body>
