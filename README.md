@@ -24,3 +24,5 @@ Submit an issue [here](https://github.com/creatively-stupid/canvos/issues/new) i
   - calculator
 
 - add socket.io integration
+
+- we have two accounts with mostly the same names, it's confusing and we're still trying to consolidate everything to one account
