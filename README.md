@@ -11,7 +11,7 @@ Submit an issue [here](https://github.com/creatively-stupid/canvos/issues/new) i
 
 ## To-do list & Notes
 
-- sorry for my bad commit messages, I work on features in parallel / over many days and it makes it hard to write useful commit messages.
+- sorry for my bad commit messages, we work on features in parallel / over many days and it makes it hard to write useful commit messages.
 
 - add more apps
 
@@ -26,3 +26,5 @@ Submit an issue [here](https://github.com/creatively-stupid/canvos/issues/new) i
 - add socket.io integration
 
 - we have two accounts with mostly the same names, it's confusing and we're still trying to consolidate everything to one account
+
+- updates may come slowly because some of us are on vacation
