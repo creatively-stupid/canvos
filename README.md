@@ -9,6 +9,8 @@ Submit an issue [here](https://github.com/creatively-stupid/canvos/issues/new) i
 
 ### [CanvOS User Manual](https://docs.google.com/document/d/1rXQyqDcJKOt74pPxdw4zRbT2L4rDulDRoVwh8JqtnZw/)
 
+### [CanvOS Classic (original)](https://github.com/CreativelyStupid/canvos-classic)
+
 ## To-do list & Notes
 
 - sorry for my bad commit messages, we work on features in parallel / over many days and it makes it hard to write useful commit messages.
