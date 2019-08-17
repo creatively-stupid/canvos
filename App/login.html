@@ -37,30 +37,8 @@
     <script src="_node_modules/crypto-js/crypto-js.js"></script>
     <script src="_node_modules/js-cookie/src/js.cookie.js"></script>
     <script src="_node_modules/moment/moment.js"></script>
+    <script src="logincrypto.js"></script>
 <script>
-
-// check login status
-var token = "";
-function validate(cookieVal, yey) {
-  if (cookieVal) {
-    var parts = cookieVal.split(":");
-    if (parts && parts[0] && parts[1]) {
-      $.post("", JSON.stringify({"r":"auth","d": cookieVal}), (data) => {
-        console.log(data);
-        if (data && data.loggedin && data.loggedin === "true") {
-          token = cookieVal;
-          yey(true);
-        } else {
-          yey(false);
-        }
-      });
-    } else {
-      yey(false);
-    }
-  } else {
-    yey(false);
-  }
-}
 
 $("#validate").on("click", () => {
   var username = $("#username").val();
