@@ -210,6 +210,7 @@ loadImage("button-move-pressed.svg",      "data:image/png;base64,iVBORw0KGgoAAAA
 loadImage("button-resize.svg",            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAADVJREFUKFNjaGho+I8LAwEDWAEDAwNYAAttj9cEuAKYDiQJVAW4MIYJWGgiTAB7BcTAihnsAY5Od31I0YxzAAAAAElFTkSuQmCC"                                    );
 loadImage("button-resize-pressed.svg",    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS42/U4J6AAAAC5JREFUKFNj+M/A8B8nBpNgBBHAQtuDFeDCcAUwHTBMvglYaGJMADFBDKyYwR4AhsJi1KlAOzcAAAAASUVORK5CYII="                                            );
 loadImage(wallpaperloc);
+loadImage("demo.png");
 
 loadScript("html2canvas.min.js");
 loadScript("keyboard.min.js");
@@ -420,7 +421,7 @@ function frame(time) {
         )
       );
     }, 0, size[1]/2, size[0]/2, size[0]/2, [
-      images["unk.svg"]
+      images["demo.png"]
     ]);
     ctx.fillStyle = "#000";
     ctx.fillRect(size[0] * 2 * startMenuScroll, 0, size[0], 64);
@@ -2341,7 +2342,7 @@ function textureMap(ctx, texture, pts) {
   // Set clipping area so that only pixels inside the triangle will
   // be affected by the image drawing operation
   ctx.save(); ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1);
-  ctx.lineTo(x2, y2); ctx.closePath(); //ctx.clip();
+  ctx.lineTo(x2, y2); ctx.closePath(); ctx.clip();
 
   // Compute matrix transform
   var delta = u0*v1 + v0*u2 + u1*v2 - v1*u2 - v0*u1 - u0*v2;
