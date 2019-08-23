@@ -2273,7 +2273,7 @@ class Mesh {
       tri = tri.cast(cam);
       if (tri.orientation() !== 1) continue; // tri on back side
       tri = tri.toScreen(w, -h).translate(new Vector2(x, y))
-      drawTriangle(ctx, tri);
+      drawTriangle(ctx, tri, this.tris[i].uv1, this.tris[i].uv2, this.tris[i].uv3, this.tris[i].txid, textures);
       screentris.push(tri);
     }
     return screentris;
@@ -2286,7 +2286,7 @@ var tritype = 2;
 // 1-classic
 // 2-torus
 
-function drawTriangle(c, tri, triuv) {
+function drawTriangle(c, tri, uv1, uv2, uv3, txid, textures) {
   if (tritype === 0) {
     c.beginPath();
     c.moveTo(tri.p1.x, tri.p1.y);
@@ -2303,7 +2303,26 @@ function drawTriangle(c, tri, triuv) {
       c
     );
   } else if (tritype === 2) {
-
+    textureMap(c, textures[txid], [
+      {
+        x: tri.p1.x,
+        y: tri.p1.y,
+        u: uv1.x,
+        v: uv1.y
+      },
+      {
+        x: tri.p2.x,
+        y: tri.p2.y,
+        u: uv2.x,
+        v: uv2.y
+      },
+      {
+        x: tri.p3.x,
+        y: tri.p3.y,
+        u: uv3.x,
+        v: uv3.y
+      }
+    ]);
   }
 }
 
