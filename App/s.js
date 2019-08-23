@@ -2361,7 +2361,7 @@ function textureMap(ctx, texture, pts) {
   ctx.transform(delta_a/delta, delta_d/delta,
                 delta_b/delta, delta_e/delta,
                 delta_c/delta, delta_f/delta);
-  ctx.drawImage(texture, 0, 0);
+  ctx.drawImage(texture, 0, 0, 1, 1);
   ctx.restore();
 }
 
