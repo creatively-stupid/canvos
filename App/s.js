@@ -1488,7 +1488,7 @@ var currentCursor = "cursor";
 var cursorSize = 12;
 var cursorCanvas = true;
 var htmlCursor = "";
-var cursorTrail = true;
+var cursorTrail = false;
 var cursorHinting = true;
 
 if (cursorCanvas) {
@@ -2275,6 +2275,10 @@ class Mesh {
 }
 
 var triscale = 8;
+var tritype = 2;
+// 0-js
+// 1-classic
+// 2-torus
 
 function drawTriangle(c, tri) {
   // c.beginPath();
