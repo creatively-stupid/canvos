@@ -406,9 +406,9 @@ function frame(time) {
       return tri
       .multiply(
         new Matrix4x4(
-          new Vector4(Math.cos(startMenuRot), 0, Math.sin(startMenuRot), 0.5),
+          new Vector4(Math.cos(startMenuRot), 0, Math.sin(startMenuRot), 0),
           new Vector4(0, 1, 0, 0),
-          new Vector4(-Math.sin(startMenuRot), 0, Math.cos(startMenuRot), -0.5),
+          new Vector4(-Math.sin(startMenuRot), 0, Math.cos(startMenuRot), -1),
           new Vector4(0, 0, 0, 1)
         )
       )
