@@ -2282,7 +2282,7 @@ class Mesh {
 }
 
 var triscale = 8;
-var tritype = 2;
+var tritype = 1;
 // 0-js
 // 1-classic
 // 2-torus
