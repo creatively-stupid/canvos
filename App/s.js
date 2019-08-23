@@ -2341,7 +2341,7 @@ function textureMap(ctx, texture, pts) {
   // Set clipping area so that only pixels inside the triangle will
   // be affected by the image drawing operation
   ctx.save(); ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1);
-  ctx.lineTo(x2, y2); ctx.closePath(); ctx.clip();
+  ctx.lineTo(x2, y2); ctx.closePath(); //ctx.clip();
 
   // Compute matrix transform
   var delta = u0*v1 + v0*u2 + u1*v2 - v1*u2 - v0*u1 - u0*v2;
