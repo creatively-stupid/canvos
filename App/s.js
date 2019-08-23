@@ -119,6 +119,8 @@ var canvas = document.getElementById("c");
 var ctxscr = canvas.getContext("2d");
 var canvas2 = document.createElement("canvas");
 var ctx = canvas2.getContext("2d");
+var lfr3dcanv = document.createElement("canvas");
+var lfr3dctx = lfr3dcanv.getContext("2d");
 
 window.onresize = () => {
   var s = sSize();
@@ -140,6 +142,17 @@ Object.prototype.getKeyByValue=function(value) {
   return Object.keys(this).find(key => this[key] === value);
 }
 
+/**
+@typedef {Number[]} ResArray
+@typedef {Number[]} MouseData
+@typedef {Object} AppObject
+@typedef {Object} ResObject
+*/
+
+/**
+@desc returns window resolution
+@returns {ResArray}
+*/
 function sSize() {
   var w = [
     window.innerWidth,
@@ -149,6 +162,11 @@ function sSize() {
 }
 
 console.olog=console.log;console.log=(...a)=>{console.olog(...a);consolelog+=a.join(" ")+"\n"}
+/**
+@desc logs data
+@param {String} command - type of log
+@param {String} data - data of log
+*/
 function log(command, data) {
   if (extconsolelog) extconsolelog.push([command, data]);
 }
@@ -239,6 +257,11 @@ for (var i = 0; i < mouseposs.length; i++) {
   mouseposs[i] = [0, 0];
 }
 
+/**
+@desc draws cursor motion-blur
+@param {MouseData} currentMouse - current frame mouse data
+@param {MouseData} lastMouse - last frame mouse data
+*/
 function drawCursorTrail(curmouse, lastmouse) {
   var minx = 100000;
   var miny = 100000;
@@ -304,6 +327,10 @@ function drawCursorTrail(curmouse, lastmouse) {
 
 var running = true;
 
+/**
+@desc requestAnimationFrame() code
+@param {Number} time - time
+*/
 function frame(time) {
   if (linking) {
     if (window.link === undefined) { // app reloaded and lost connection
@@ -372,7 +399,9 @@ function frame(time) {
     ctx.fillStyle = "#00f";
     //ctx.fillRect(0, 0, (size[0]/2) * (1-startMenuScroll), size[1]-32);
     var cube_rotation = startMenuScroll * Math.PI / 2 - 0.0001;
-    var cubetris = cubeMesh.render(ctx, (tri) => {
+    var update3d = startMenuScroll < 0.99;
+
+    if (update3d) var cubetris = cubeMesh.render(ctx, (tri) => {
       return tri
       .multiply(
         new Matrix4x4(
@@ -402,7 +431,8 @@ function frame(time) {
     ctx.font = "900 30px serf";
     ctx.fillText("Start Menu", size[0] * (1-startMenuScroll)-3*size[0]/4, 32);
     var exapps = fs.seek("apps/gui/builtin/").getFiles();
-    var mw = Math.max(...(tris => {
+    var mw = 1;
+    if (update3d) mw = Math.max(...(tris => {
       var a = [];
       tris.forEach(tri => {
         a.push(tri.p1.x);
@@ -489,6 +519,17 @@ function frame(time) {
 }
 requestAnimationFrame(frame);
 
+/**
+@desc draws a button to the buffer
+@param {String} label - label
+@param {Number} x - x co-ord
+@param {Number} y - y co-ord
+@param {Number} width - width
+@param {Number} height - width
+@param {Function} pressed - callback
+@param {MouseData} currentMouse
+@param {MouseData} lastMouse
+*/
 function drawButton(l, x, y, w, h, p, cm, lm) {
   ctx.fillStyle = (cm[2] && inBox(cm[0], cm[1], x, y, w, h)) ? "#9f9fff" : "#7f7fff";
   if (!cm[2] && lm[2] && inBox(cm[0], cm[1], x, y, w, h)) {
@@ -497,12 +538,12 @@ function drawButton(l, x, y, w, h, p, cm, lm) {
   ctx.strokeStyle = "#000";
   ctx.lineJoin = "miter";
   ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(x+w-10,y);
-  ctx.lineTo(x+w,y+10);
-  ctx.lineTo(x+w,y+h);
-  ctx.lineTo(x,y+h);
-  ctx.lineTo(x,y);
+  ctx.moveTo(x - 0.5, y - 0.5);
+  ctx.lineTo(x + w - 9.5, y - 0.5);
+  ctx.lineTo(x + w + 0.5, y + 9.5);
+  ctx.lineTo(x + w + 0.5, y + h + 0.5);
+  ctx.lineTo(x - 0.5, y + h + 0.5);
+  ctx.lineTo(x - 0.5, y - 0.5);
   ctx.fill();
   ctx.stroke();
   ctx.font = "900 30px serf";
@@ -512,6 +553,18 @@ function drawButton(l, x, y, w, h, p, cm, lm) {
   ctx.fillText(l, x+2, y+3);
 }
 
+/**
+@desc draws a button to any canvas
+@param {Object} ctx - context
+@param {String} label - label
+@param {Number} x - x co-ord
+@param {Number} y - y co-ord
+@param {Number} width - width
+@param {Number} height - width
+@param {Function} pressed - callback
+@param {MouseData} currentMouse
+@param {MouseData} lastMouse
+*/
 function drawCtxButton(ctx, l, x, y, w, h, p, cm, lm) {
   ctx.fillStyle = (cm[2] && inBox(cm[0], cm[1], x, y, w, h)) ? "#9f9fff" : "#7f7fff";
   if (!cm[2] && lm[2] && inBox(cm[0], cm[1], x, y, w, h)) {
@@ -520,12 +573,12 @@ function drawCtxButton(ctx, l, x, y, w, h, p, cm, lm) {
   ctx.strokeStyle = "#000";
   ctx.lineJoin = "miter";
   ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(x+w-10,y);
-  ctx.lineTo(x+w,y+10);
-  ctx.lineTo(x+w,y+h);
-  ctx.lineTo(x,y+h);
-  ctx.lineTo(x,y);
+  ctx.moveTo(x - 0.5, y - 0.5);
+  ctx.lineTo(x + w - 9.5, y - 0.5);
+  ctx.lineTo(x + w + 0.5, y + 9.5);
+  ctx.lineTo(x + w + 0.5, y + h + 0.5);
+  ctx.lineTo(x - 0.5, y + h + 0.5);
+  ctx.lineTo(x - 0.5, y - 0.5);
   ctx.fill();
   ctx.stroke();
   ctx.font = "900 30px serf";
@@ -534,7 +587,18 @@ function drawCtxButton(ctx, l, x, y, w, h, p, cm, lm) {
   ctx.textAlign = "left";
   ctx.fillText(l, x+2, y+3);
 }
-
+/**
+@desc draws a button to any app
+@param {AppObject} app
+@param {String} label - label
+@param {Number} x - x co-ord
+@param {Number} y - y co-ord
+@param {Number} width - width
+@param {Number} height - width
+@param {Function} pressed - callback
+@param {MouseData} currentMouse
+@param {MouseData} lastMouse
+*/
 function drawGlobalButton(app, l, x, y, w, h, p, cm, lm) {
   var uctx = app.ctx;
   uctx.fillStyle = (cm[2] && inBox(cm[0], cm[1], x+app.x+1, y+app.y+11, w, h)) ? "#9f9fff" : "#7f7fff";
@@ -544,12 +608,12 @@ function drawGlobalButton(app, l, x, y, w, h, p, cm, lm) {
   uctx.strokeStyle = "#000";
   uctx.lineJoin = "miter";
   uctx.beginPath();
-  uctx.moveTo(x, y);
-  uctx.lineTo(x+w-10,y);
-  uctx.lineTo(x+w,y+10);
-  uctx.lineTo(x+w,y+h);
-  uctx.lineTo(x,y+h);
-  uctx.lineTo(x,y);
+  ctx.moveTo(x - 0.5, y - 0.5);
+  ctx.lineTo(x + w - 9.5, y - 0.5);
+  ctx.lineTo(x + w + 0.5, y + 9.5);
+  ctx.lineTo(x + w + 0.5, y + h + 0.5);
+  ctx.lineTo(x - 0.5, y + h + 0.5);
+  ctx.lineTo(x - 0.5, y - 0.5);
   uctx.fill();
   uctx.stroke();
   uctx.fillStyle = "#000";
@@ -557,7 +621,12 @@ function drawGlobalButton(app, l, x, y, w, h, p, cm, lm) {
   uctx.textAlign = "left";
   uctx.fillText(l, x+2, y+3);
 }
-
+// TODO: Make sure this works
+/**
+@desc draws the boot-up grid
+@param {ResArray} size - size of the screen i think
+@param {Number} textWidth - width of text
+*/
 function drawGrid(size, textwidth) {
   if (!images["bootpattern"]) {
     var icanv = document.createElement("canvas"),
@@ -598,6 +667,10 @@ var images = {};
 var files = {};
 var fs;
 
+/**
+@desc adds an image to load buffer
+@param {String} src - source url
+*/
 function loadImage(src) {
   if (src === null) return;
   loadqueue.push([0, src]);
@@ -606,6 +679,11 @@ function loadImage(src) {
   loadMax++;
 }
 
+/**
+@desc adds a dataurl image to load buffer
+@param {String} src - source url (name / for compatibility)
+@param {String} data - base64 data
+*/
 function loadImageData(src, data) {
   /*
   loadqueue.push([0, src]);
@@ -620,6 +698,10 @@ function loadImageData(src, data) {
   //*/
 }
 
+/**
+@desc adds a generic file to load buffer
+@param {String} src - source url
+*/
 function loadFile(src) {
   if (src === null) return;
   loadqueue.push([1, src]);
@@ -628,6 +710,10 @@ function loadFile(src) {
   loadMax++;
 }
 
+/**
+@desc adds a .js file to load buffer
+@param {String} src - source url
+*/
 function loadScript(src) {
   if (src === null) return;
   loadqueue.push([2, src]);
@@ -636,6 +722,10 @@ function loadScript(src) {
   loadMax++;
 }
 
+/**
+@desc adds an app manifest to load buffer
+@param {String} src - source url
+*/
 function loadApp(src) {
   if (src === null) return;
   loadqueue.push([3, src + "app.json", src]);
@@ -643,6 +733,9 @@ function loadApp(src) {
   log("queue-app", src);
   loadMax++;
 }
+/**
+@desc loads the entire filesystem
+*/
 function loadAllShit() {
   loadqueue.push([4, "fs/?recurse"]);
   console.log("loading the entire system so this will take a while");
@@ -650,6 +743,10 @@ function loadAllShit() {
   loadMax++;
 }
 
+/**
+@desc parses an item from the buffer, and recurses
+@param {Function} callback - callback
+*/
 async function loadAllFiles(callback) {
   if (loadqueue.length === 0) {
     console.log("finished loading!");
@@ -722,6 +819,15 @@ async function loadAllFiles(callback) {
   }
 }
 
+/**
+@desc launch an app
+@param {String} appPath - path of app
+@param {MouseData} currentMouse
+@param {MouseData} lastMouse
+@param {Number} time - time from frame()
+@param {Number} deltatime - deltatime from frame()
+@param {ResArray} size - size of screen
+*/
 function launchApp(app, curmouse, lastmouse, time, deltatime, size) {
   apps.push(clone(files[app]));
   var id = apps.length - 1;
@@ -735,6 +841,14 @@ function launchApp(app, curmouse, lastmouse, time, deltatime, size) {
   apps[id]._path = app;
   files[app + apps[id].s].s(curmouse, lastmouse, time, deltatime, size, apps[id], {x: apps[id].x + 1, y: apps[id].y + 11, w: apps[id].w, h: apps[id].h});
 }
+/**
+@desc render and execute apps
+@param {MouseData} currentMouse
+@param {MouseData} lastMouse
+@param {Number} time
+@param {Number} deltatime
+@param {ResArray} size - screen res
+*/
 function processApps(cm, lm, pt, dt, sz) {
   for (var i = 0; i < appOrder.length; i++) {
     var app = apps[appOrder[i]];
@@ -1009,6 +1123,14 @@ function processApps(cm, lm, pt, dt, sz) {
   }
 }
 
+/**
+@desc render the bottom bar
+@param {MouseData} currentMouse
+@param {MouseData} lastMouse
+@param {Number} time
+@param {Number} deltatime
+@param {ResArray} size - screen res
+*/
 function drawTray(cm, lm, pt, dt, sz) {
   var startw = ctx.measureText("Start").width+8;
   for (var i = 0; i < appOrder.length; i++) {
@@ -1046,6 +1168,11 @@ function drawTray(cm, lm, pt, dt, sz) {
   }
 }
 
+/**
+@desc determines app collision with point
+@param {Number} x
+@param {Number} y
+*/
 function appCollidingWith(x, y) {
   for (var i = appOrder.length-1; i >= 0; i--) {
     if (!apps[appOrder[i]]) continue;
@@ -1056,6 +1183,10 @@ function appCollidingWith(x, y) {
   return null;
 }
 
+/**
+@desc returns app obstruction status, bit 0 is on top, bit 1 is partial, bit 3 is full
+@param {Number} appId - id of app
+*/
 function appObstructionState(appId) { // 1-bit: on top, 2-bit: partially obstructed, 3-bit fully obstructed
   var top = appId === appOrder.length - 1;
   var part = false;
@@ -1067,6 +1198,10 @@ function appObstructionState(appId) { // 1-bit: on top, 2-bit: partially obstruc
   return (top?1:0)+(part?2:0)+(full?4:0);
 }
 
+/**
+@desc Clone a basic object
+@param {Object} object - object to clone
+*/
 function clone(obj) {
   var copy;
 
@@ -1101,23 +1236,65 @@ function clone(obj) {
   throw new Error("Unable to copy obj! Its type isn't supported.");
 }
 
+/**
+@desc it's a lerp, what'd ya expect
+@param {Number} a
+@param {Number} b
+@param {Number} t
+@param {Number} min
+@param {Number} max
+@returns {Number}
+*/
 function lerp(v0, v1, t, mi, ma) {
   return (v0*(1-t)+v1*t).clamp(mi || 0, ma || 1);
 }
 
+/**
+@desc it's a lerp, what'd ya expect, it to be clamped? Nah
+@param {Number} a
+@param {Number} b
+@param {Number} t
+@returns {Number}
+*/
 function lerpUnclamped(v0, v1, t) {
   return v0*(1-t)+v1*t;
 }
 
+/**
+@desc distance
+@param {Number} ax
+@param {Number} ay
+@param {Number} bx
+@param {Number} by
+@returns {Number}
+*/
 function dist(ax, ay, bx, by) {
   var a = bx - ax, b = by - ay;
   return Math.sqrt((a*a)+(b*b));
 }
 
+/**
+@desc point-box collision
+@param {Number} pointX
+@param {Number} pointY
+@param {Number} boxX
+@param {Number} boxY
+@param {Number} boxWidth
+@param {Number} boxHeight
+@returns {Boolean}
+*/
 function inBox(px, py, x, y, w, h) {
   return px >= x && px <= x + w && py >= y && py <= y + h;
 }
 
+/**
+@desc line-line collision
+@param {ResObject} a1
+@param {ResObject} a2
+@param {ResObject} b1
+@param {ResObject} b2
+@returns {Boolean}
+*/
 function LineToLine(a1, a2, b1, b2) {
   var result;
 
@@ -1148,6 +1325,18 @@ function LineToLine(a1, a2, b1, b2) {
   return result;
 };
 
+/**
+@desc rect-rect collision (no inside-handling)
+@param {Number} x1
+@param {Number} y1
+@param {Number} w1
+@param {Number} h1
+@param {Number} x2
+@param {Number} y2
+@param {Number} w2
+@param {Number} h2
+@returns {Boolean}
+*/
 function rectInRect(x1, y1, w1, h1, x2, y2, w2, h2) {
   // top to left
   if (LineToLine({x: x1, y: y1}, {x: x1+w1, y: y1}, {x: x2, y: y2}, {x: x2, y: y2+h2})) return true;
@@ -1168,6 +1357,18 @@ function rectInRect(x1, y1, w1, h1, x2, y2, w2, h2) {
   return false;
 }
 
+/**
+@desc rect-rect collision (no outside-handling)
+@param {Number} x1
+@param {Number} y1
+@param {Number} width1
+@param {Number} height1
+@param {Number} x2
+@param {Number} y2
+@param {Number} width2
+@param {Number} height2
+@returns {Boolean}
+*/
 function rectCoveringRect(x1, y1, w1, h1, x2, y2, w2, h2) {
   // top-left
   if (!inBox(x1, y1, x2, y2, w2, h2)) return false;
@@ -1176,6 +1377,14 @@ function rectCoveringRect(x1, y1, w1, h1, x2, y2, w2, h2) {
   return true;
 }
 
+/**
+@desc render an image to buffer if loaded, does nothing if unloaded
+@param {String} image - image path
+@param {Number} x
+@param {Number} y
+@param {Number} width
+@param {Number} height
+*/
 function drawImage(i, x, y, w, h) {
   i = images[i];
   if (!i) i = images["unk.svg"];
@@ -1183,30 +1392,53 @@ function drawImage(i, x, y, w, h) {
   ctx.drawImage(i, x, y, w, h);
 }
 
+/**
+@desc render an image to any contex if loaded, does nothing if unloaded
+@param {String} image - image path
+@param {Number} x
+@param {Number} y
+@param {Number} width
+@param {Number} height
+@param {Object} ctx - context
+*/
 function drawGlobalImage(i, x, y, w, h, c) {
   i = images[i];
   if (!i) i = images["unk.svg"];
-  if (!i) return;
   c.drawImage(i, x, y, w, h);
 }
 
+/**
+@desc gets resolution of image, returns [192, 192] if unloaded
+@param {String} image - image path
+@returns {ResArray}
+*/
 function imageRes(i) {
   i = images[i];
   if (!i) i = images["unk"];
-  if (!i) return [1, 1];
   return [i.width, i.height];
 }
 
 var _mousestate = [0, 0, 0, 0, 0, 0, 0];
 var _mousestateo = [0, 0, 0, 0, 0, 0, 0];
 
+/**
+@desc get mouse state
+@returns {MouseData}
+*/
 function mouse() {
   return _mousestate;
 }
+/**
+@desc get old mouse state
+@returns {MouseData}
+*/
 function omouse() {
   return _mousestateo;
 }
 
+/**
+@desc shift mouse state
+*/
 function updateMouse() {
   _mousestateo = [
     _mousestate[0],
@@ -1225,6 +1457,9 @@ document.addEventListener('mouseout', onMouseOut, false);
 document.addEventListener('mousedown', onMouseUpdate, false);
 document.addEventListener('mouseup', onMouseUpdate, false);
 
+/**
+@desc (INTERNAL) used for events
+*/
 function onMouseUpdate(e) {
   e.preventDefault();
   _mousestate[0] = e.pageX;
@@ -1235,6 +1470,9 @@ function onMouseUpdate(e) {
   _mousestate[5] = !!(e.buttons & 8);
   _mousestate[6] = !!(e.buttons & 16);
 }
+/**
+@desc (INTERNAL) used for events
+*/
 function onMouseOut(e) {
   e.preventDefault();
   _mousestate[0] = Infinity;
@@ -1250,18 +1488,29 @@ var currentCursor = "cursor";
 var cursorSize = 12;
 var cursorCanvas = true;
 var htmlCursor = "";
-var cursorTrail = false;
+var cursorTrail = true;
+var cursorHinting = true;
 
 if (cursorCanvas) {
   setCursor("none");
 }
-
+/**
+@desc (INTERNAL) set html cursor type
+*/
 function setCursor(n) {
   if (htmlCursor === n) return;
-  $("*").css("cursor", n);
+  //$("*").css("cursor", n);
+  document.getElementById("c").style.cursor = n;
   htmlCursor = n;
 }
 
+/**
+@desc draw cursor to context
+@param {Object} context
+@param {MouseData} currentMouse
+@param {MouseData} lastMouse
+@param {Boolean} cancelColor - cancels colorization
+*/
 function drawCursor(ctx, cm, lm, cc) {
   if (!cursorCanvas) {
     if (currentCursor.startsWith("cursor")) {
@@ -1299,11 +1548,19 @@ function drawCursor(ctx, cm, lm, cc) {
         ctx.fillStyle = "#f00";
       }
     }
-    ctx.moveTo(cm[0], cm[1]);
-    ctx.lineTo(cm[0] + cs, cm[1] + cs);
-    ctx.lineTo(cm[0] + cs * (1 - 2 / (2 + Math.SQRT2)), cm[1] + cs);
-    ctx.lineTo(cm[0], cm[1] + cs * (1 + 1 / (1 + Math.SQRT2)));
-    ctx.lineTo(cm[0], cm[1]);
+    if (cursorHinting) {
+      ctx.moveTo(Math.ceil(cm[0])-0.5, Math.ceil(cm[1])-0.5);
+      ctx.lineTo(Math.ceil(cm[0])-0.5 + cs, Math.ceil(cm[1] + cs)-0.5);
+      ctx.lineTo(Math.ceil(cm[0])-0.5 + cs * (1 - 2 / (2 + Math.SQRT2)), Math.ceil(cm[1] + cs)-0.5);
+      ctx.lineTo(Math.ceil(cm[0])-0.5, Math.ceil(cm[1] + cs * (1 + 1 / (1 + Math.SQRT2)))-0.5);
+      ctx.lineTo(Math.ceil(cm[0])-0.5, Math.ceil(cm[1])-0.5);
+    } else {
+      ctx.moveTo(cm[0], cm[1]);
+      ctx.lineTo(cm[0] + cs, cm[1] + cs);
+      ctx.lineTo(cm[0] + cs * (1 - 2 / (2 + Math.SQRT2)), cm[1] + cs);
+      ctx.lineTo(cm[0], cm[1] + cs * (1 + 1 / (1 + Math.SQRT2)));
+      ctx.lineTo(cm[0], cm[1]);
+    }
     ctx.fill();
     ctx.stroke();
   } else if (currentCursor.startsWith("drag")) {
@@ -1320,44 +1577,88 @@ function drawCursor(ctx, cm, lm, cc) {
     if (currentCursor === "drag-ew") {
       ns = false;
     }
-    ctx.moveTo(cm[0] + 2*cs/15, cm[1] - 2*cs/15);
-    if (ew) {
-      ctx.lineTo(cm[0] + 0.4*cs, cm[1] - 2*cs/15);
-      ctx.lineTo(cm[0] + 0.4*cs, cm[1] - 0.2*cs);
-      ctx.lineTo(cm[0] + 2*cs/3, cm[1]);
-      ctx.lineTo(cm[0] + 0.4*cs, cm[1] + 0.2*cs);
-      ctx.lineTo(cm[0] + 0.4*cs, cm[1] + 2*cs/15);
-      ctx.lineTo(cm[0] + 2*cs/15, cm[1] + 2*cs/15);
+    if (cursorHinting) {
+      ctx.moveTo(Math.ceil(cm[0] + 2*cs/15)-0.5, Math.ceil(cm[1] - 2*cs/15)-0.5);
+      if (ew) {
+        ctx.lineTo(Math.ceil(cm[0] + 0.4*cs)-0.5, Math.ceil(cm[1] - 2*cs/15)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] + 0.4*cs)-0.5, Math.ceil(cm[1] - 0.2*cs)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] + 2*cs/3)-0.5, Math.ceil(cm[1])-0.5);
+        ctx.lineTo(Math.ceil(cm[0] + 0.4*cs)-0.5, Math.ceil(cm[1] + 0.2*cs)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] + 0.4*cs)-0.5, Math.ceil(cm[1] + 2*cs/15)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] + 2*cs/15)-0.5, Math.ceil(cm[1] + 2*cs/15)-0.5);
+      }
+      if (ns) {
+        ctx.lineTo(Math.ceil(cm[0] + 2*cs/15)-0.5, Math.ceil(cm[1] + 0.4*cs)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] + 0.2*cs)-0.5, Math.ceil(cm[1] + 0.4*cs)-0.5);
+        ctx.lineTo(Math.ceil(cm[0])-0.5, Math.ceil(cm[1] + 2*cs/3)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] - 0.2*cs)-0.5, Math.ceil(cm[1] + 0.4*cs)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] - 2*cs/15)-0.5, Math.ceil(cm[1] + 0.4*cs)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] - 2*cs/15)-0.5, Math.ceil(cm[1] + 2*cs/15)-0.5);
+      }
+      if (ew) {
+        ctx.lineTo(Math.ceil(cm[0] - 0.4*cs)-0.5, Math.ceil(cm[1] + 2*cs/15)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] - 0.4*cs)-0.5, Math.ceil(cm[1] + 0.2*cs)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] - 2*cs/3)-0.5, Math.ceil(cm[1])-0.5);
+        ctx.lineTo(Math.ceil(cm[0] - 0.4*cs)-0.5, Math.ceil(cm[1] - 0.2*cs)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] - 0.4*cs)-0.5, Math.ceil(cm[1] - 2*cs/15)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] - 2*cs/15)-0.5, Math.ceil(cm[1] - 2*cs/15)-0.5);
+      }
+      if (ns) {
+        ctx.lineTo(Math.ceil(cm[0] - 2*cs/15)-0.5, Math.ceil(cm[1] - 0.4*cs)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] - 0.2*cs)-0.5, Math.ceil(cm[1] - 0.4*cs)-0.5);
+        ctx.lineTo(Math.ceil(cm[0])-0.5, Math.ceil(cm[1] - 2*cs/3)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] + 0.2*cs)-0.5, Math.ceil(cm[1] - 0.4*cs)-0.5);
+        ctx.lineTo(Math.ceil(cm[0] + 2*cs/15)-0.5, Math.ceil(cm[1] - 0.4*cs)-0.5);
+      }
+      ctx.lineTo(Math.ceil(cm[0] + 2*cs/15)-0.5, Math.ceil(cm[1] - 2*cs/15)-0.5);
+    } else {
+      ctx.moveTo(cm[0] + 2*cs/15, cm[1] - 2*cs/15);
+      if (ew) {
+        ctx.lineTo(cm[0] + 0.4*cs, cm[1] - 2*cs/15);
+        ctx.lineTo(cm[0] + 0.4*cs, cm[1] - 0.2*cs);
+        ctx.lineTo(cm[0] + 2*cs/3, cm[1]);
+        ctx.lineTo(cm[0] + 0.4*cs, cm[1] + 0.2*cs);
+        ctx.lineTo(cm[0] + 0.4*cs, cm[1] + 2*cs/15);
+        ctx.lineTo(cm[0] + 2*cs/15, cm[1] + 2*cs/15);
+      }
+      if (ns) {
+        ctx.lineTo(cm[0] + 2*cs/15, cm[1] + 0.4*cs);
+        ctx.lineTo(cm[0] + 0.2*cs, cm[1] + 0.4*cs);
+        ctx.lineTo(cm[0], cm[1] + 2*cs/3);
+        ctx.lineTo(cm[0] - 0.2*cs, cm[1] + 0.4*cs);
+        ctx.lineTo(cm[0] - 2*cs/15, cm[1] + 0.4*cs);
+        ctx.lineTo(cm[0] - 2*cs/15, cm[1] + 2*cs/15);
+      }
+      if (ew) {
+        ctx.lineTo(cm[0] - 0.4*cs, cm[1] + 2*cs/15);
+        ctx.lineTo(cm[0] - 0.4*cs, cm[1] + 0.2*cs);
+        ctx.lineTo(cm[0] - 2*cs/3, cm[1]);
+        ctx.lineTo(cm[0] - 0.4*cs, cm[1] - 0.2*cs);
+        ctx.lineTo(cm[0] - 0.4*cs, cm[1] - 2*cs/15);
+        ctx.lineTo(cm[0] - 2*cs/15, cm[1] - 2*cs/15);
+      }
+      if (ns) {
+        ctx.lineTo(cm[0] - 2*cs/15, cm[1] - 0.4*cs);
+        ctx.lineTo(cm[0] - 0.2*cs, cm[1] - 0.4*cs);
+        ctx.lineTo(cm[0], cm[1] - 2*cs/3);
+        ctx.lineTo(cm[0] + 0.2*cs, cm[1] - 0.4*cs);
+        ctx.lineTo(cm[0] + 2*cs/15, cm[1] - 0.4*cs);
+      }
+      ctx.lineTo(cm[0] + 2*cs/15, cm[1] - 2*cs/15);
     }
-    if (ns) {
-      ctx.lineTo(cm[0] + 2*cs/15, cm[1] + 0.4*cs);
-      ctx.lineTo(cm[0] + 0.2*cs, cm[1] + 0.4*cs);
-      ctx.lineTo(cm[0], cm[1] + 2*cs/3);
-      ctx.lineTo(cm[0] - 0.2*cs, cm[1] + 0.4*cs);
-      ctx.lineTo(cm[0] - 2*cs/15, cm[1] + 0.4*cs);
-      ctx.lineTo(cm[0] - 2*cs/15, cm[1] + 2*cs/15);
-    }
-    if (ew) {
-      ctx.lineTo(cm[0] - 0.4*cs, cm[1] + 2*cs/15);
-      ctx.lineTo(cm[0] - 0.4*cs, cm[1] + 0.2*cs);
-      ctx.lineTo(cm[0] - 2*cs/3, cm[1]);
-      ctx.lineTo(cm[0] - 0.4*cs, cm[1] - 0.2*cs);
-      ctx.lineTo(cm[0] - 0.4*cs, cm[1] - 2*cs/15);
-      ctx.lineTo(cm[0] - 2*cs/15, cm[1] - 2*cs/15);
-    }
-    if (ns) {
-      ctx.lineTo(cm[0] - 2*cs/15, cm[1] - 0.4*cs);
-      ctx.lineTo(cm[0] - 0.2*cs, cm[1] - 0.4*cs);
-      ctx.lineTo(cm[0], cm[1] - 2*cs/3);
-      ctx.lineTo(cm[0] + 0.2*cs, cm[1] - 0.4*cs);
-      ctx.lineTo(cm[0] + 2*cs/15, cm[1] - 0.4*cs);
-    }
-    ctx.lineTo(cm[0] + 2*cs/15, cm[1] - 2*cs/15);
     ctx.fill();
     ctx.stroke();
   }
 }
 
+/**
+@desc creates wrapped text
+@param {Object} context
+@param {String} text - text to wrap
+@param {Number} width - width of area
+@param {Number} fontsize - size of font
+@param {*} soft - i don't even know
+*/
 function wrapText(ctx, text, width, fontSize, soft) {
   var lines = [],
     line = '',
@@ -1396,6 +1697,15 @@ function wrapText(ctx, text, width, fontSize, soft) {
   return {text: lines, height: currentY};
 }
 
+/**
+@desc creates wrapped cursor
+@param {Object} context
+@param {String} text - text to wrap
+@param {String} char - character to positionalate
+@param {Number} pos - position of cursor
+@param {Number} width - width of area
+@param {Number} fontsize - size of font
+*/
 function getCursorPos(ctx, text, char, pos, width, fontSize) {
   var text = text.slice(0, pos) + char,
     lines = [],
@@ -1469,6 +1779,20 @@ document.addEventListener("fullscreenchange", function () {
 }, false);
 //*/
 
+/**
+@desc open a modal dialog
+@param {String} title
+@param {String} message
+@param {String} image
+@param {*} btns
+@param {Number} width
+@param {Number} height
+@param {MouseData} currentMouse
+@param {MouseData} lastMouse
+@param {Number} time
+@param {Number} delattime
+@param {Number} size
+*/
 function launchModal(title, msg, img, btns, w, h, cm, lm, t, dt, sz) {
   var id = 0;
   while(files["_tmodal_"+id] !== undefined) id++;
@@ -1529,8 +1853,9 @@ function launchModal(title, msg, img, btns, w, h, cm, lm, t, dt, sz) {
 }
 
 class Folder {
-  constructor (contents) {
+  constructor (contents, path) {
     this.data = contents;
+    this.path = path !== undefined ? path : ""
   }
   getFiles () {
     return Object.keys(this.data);
@@ -1621,12 +1946,19 @@ window.onerror = (m, s, l, c) => {
   error(m, s, l, c);
 }
 
+/**
+@desc delay
+@param {Number} ms - miliseconds
+*/
 async function delay(ms) {
   return new Promise(yey => {
     setTimeout(yey, ms);
   })
 }
 
+/**
+@desc (INTERNAL) BSOD screen
+*/
 async function error(m, s, l, c) {
   var ctx = ctxscr;
   setCursor("default");
@@ -1710,6 +2042,9 @@ async function error(m, s, l, c) {
   }
 }
 
+/**
+@desc (INTERNAL) BSOD screen
+*/
 function toFixed(x) {
   if (Math.abs(x) < 1.0) {
       var e = parseInt(x.toString().split('e-')[1]);
@@ -1728,6 +2063,9 @@ function toFixed(x) {
   return x;
 }
 
+/**
+@desc (INTERNAL) BSOD screen
+*/
 function randomLen(c) {
   if (c < 2) return '';
   return Math.floor(Math.random()*10).toString() + randomLen(c - 1);
@@ -1748,8 +2086,8 @@ class Vector4 {
       m.x41 * this.x1 + m.x42 * this.x2 + m.x43 * this.x3 + m.x44 * this.x4
     );
   }
-  toPoint3D() {
-    return new Point3D(
+  toVector3() {
+    return new Vector3(
       this.x1,
       this.x2,
       this.x3
@@ -1778,38 +2116,38 @@ class Matrix4x4 {
   }
 }
 
-class Point2D {
+class Vector2 {
   constructor(x, y) {
     this.x = x || 0;
     this.y = y || 0;
   }
   toScreen(w, h) {
-    return new Point2D(
+    return new Vector2(
       this.x*w,
       this.y*h
     );
   }
   rotate(a) {
-    return new Point2D(
+    return new Vector2(
       Math.cos(a)*(this.x)-Math.sin(a)*(this.y),
       Math.cos(a)*(this.y)+Math.sin(a)*(this.x)
     );
   }
   translate(o) {
-    return new Point2D(
+    return new Vector2(
       this.x + o.x,
       this.y + o.y
     );
   }
   scale(o) {
-    return new Point2D(
+    return new Vector2(
       this.x * o.x,
       this.y * o.y
     );
   }
 }
 
-class Point3D {
+class Vector3 {
   constructor(x, y, z) {
     this.x = x !== undefined ? x : 0;
     this.y = y !== undefined ? y : 0;
@@ -1817,7 +2155,7 @@ class Point3D {
   }
   cast(c, o) {
     var s = o ? 1 : c.d / this.z;
-    return new Point2D(this.x * s, this.y * s);
+    return new Vector2(this.x * s, this.y * s);
   }
   toVector4() {
     return new Vector4(
@@ -1831,9 +2169,9 @@ class Point3D {
 
 class Tri2D {
   constructor(p1, p2, p3) {
-    this.p1 = p1 !== undefined ? p1 : new Point2D();
-    this.p2 = p2 !== undefined ? p2 : new Point2D();
-    this.p3 = p3 !== undefined ? p3 : new Point2D();
+    this.p1 = p1 !== undefined ? p1 : new Vector2();
+    this.p2 = p2 !== undefined ? p2 : new Vector2();
+    this.p3 = p3 !== undefined ? p3 : new Vector2();
   }
   toScreen(w, h) {
     return new Tri2D(
@@ -1869,9 +2207,9 @@ class Tri2D {
 
 class Tri3D {
   constructor(p1, p2, p3) {
-    this.p1 = p1 !== undefined ? p1 : new Point3D();
-    this.p2 = p2 !== undefined ? p2 : new Point3D();
-    this.p3 = p3 !== undefined ? p3 : new Point3D();
+    this.p1 = p1 !== undefined ? p1 : new Vector3();
+    this.p2 = p2 !== undefined ? p2 : new Vector3();
+    this.p3 = p3 !== undefined ? p3 : new Vector3();
   }
   cast(c, o) {
     return new Tri2D(
@@ -1882,9 +2220,9 @@ class Tri3D {
   }
   multiply(m) {
     return new Tri3D(
-      this.p1.toVector4().multiply(m).toPoint3D(),
-      this.p2.toVector4().multiply(m).toPoint3D(),
-      this.p3.toVector4().multiply(m).toPoint3D()
+      this.p1.toVector4().multiply(m).toVector3(),
+      this.p2.toVector4().multiply(m).toVector3(),
+      this.p3.toVector4().multiply(m).toVector3()
     )
   }
   inCamera() {
@@ -1900,9 +2238,9 @@ class Camera3D {
 
 class MeshTri {
   constructor(p1, p2, p3, oc, fc) {
-    this.p1 = p1 !== undefined ? p1 : new Point3D();
-    this.p2 = p2 !== undefined ? p2 : new Point3D();
-    this.p3 = p3 !== undefined ? p3 : new Point3D();
+    this.p1 = p1 !== undefined ? p1 : new Vector3();
+    this.p2 = p2 !== undefined ? p2 : new Vector3();
+    this.p3 = p3 !== undefined ? p3 : new Vector3();
     this.oc = oc !== undefined ? oc : new Vector4(255, 255, 255, 255);
     this.fc = fc !== undefined ? fc : new Vector4(255, 0,   0,   255);
   }
@@ -1928,7 +2266,7 @@ class Mesh {
       if (!tri.inCamera()) continue; // tri is outside camera
       tri = tri.cast(cam);
       if (tri.orientation() !== 1) continue; // tri on back side
-      tri = tri.toScreen(w, -h).translate(new Point2D(x, y))
+      tri = tri.toScreen(w, -h).translate(new Vector2(x, y))
       drawTriangle(ctx, tri);
       screentris.push(tri);
     }
@@ -1936,106 +2274,194 @@ class Mesh {
   }
 }
 
+var triscale = 8;
 
 function drawTriangle(c, tri) {
-  c.beginPath();
-  c.moveTo(tri.p1.x, tri.p1.y);
-  c.lineTo(tri.p2.x, tri.p2.y);
-  c.lineTo(tri.p3.x, tri.p3.y);
-  c.lineTo(tri.p1.x, tri.p1.y);
-  c.fill();
-  c.stroke();
+  // c.beginPath();
+  // c.moveTo(tri.p1.x, tri.p1.y);
+  // c.lineTo(tri.p2.x, tri.p2.y);
+  // c.lineTo(tri.p3.x, tri.p3.y);
+  // c.lineTo(tri.p1.x, tri.p1.y);
+  // c.fill();
+  // c.stroke();
+  classic_drawTri(
+    Math.round(tri.p1.x/triscale), Math.round(tri.p1.y/triscale),
+    Math.round(tri.p2.x/triscale), Math.round(tri.p2.y/triscale),
+    Math.round(tri.p3.x/triscale), Math.round(tri.p3.y/triscale),
+    c
+  );
+}
+
+function classichelper_hline(x, y, l, ctx) {
+  for (var i = 0; i < l; i++) {
+    ctx.fillRect(Math.round(x + i)*triscale, Math.round(y)*triscale, triscale, triscale);
+  }
+}
+
+function classic_drawTri(x0, y0, x1, y1, x2, y2, ctx) {
+  /* thx me */
+  // thx adafruit
+  var a, b, y, last;
+  if (y0 > y1) {
+      var i = y0;
+      y0 = y1;
+      y1 = i;
+      var i = x0;
+      x0 = x1;
+      x1 = i;
+  }
+  if (y1 > y2) {
+      var i = y2;
+      y2 = y1;
+      y1 = i;
+      var i = x2;
+      x2 = x1;
+      x1 = i;
+  }
+  if (y0 > y1) {
+      var i = y0;
+      y0 = y1;
+      y1 = i;
+      var i = x0;
+      x0 = x1;
+      x1 = i;
+  }
+  if (y0 == y2) {
+      a = b = x0;
+      if (x1 < a) a = x1;
+      else if (x1 > b) b = x1;
+      if (x2 < a) a = x2;
+      else if (x2 > b) b = x2;
+      classichelper_hline(a, y0, b - a, ctx);
+  } else {
+      var dx01 = x1 - x0;
+      var dy01 = y1 - y0;
+      var dx02 = x2 - x0;
+      var dy02 = y2 - y0;
+      var dx12 = x2 - x1;
+      var dy12 = y2 - y1;
+      var sa = 0;
+      var sb = 0;
+      if (y1 == y2) last = y1;
+      else last = y1 - 1;
+      for (y = y0; y < last; y++) {
+          a = x0 + sa / dy01;
+          b = x0 + sb / dy02;
+          sa += dx01;
+          sb += dx02;
+          if (a > b) {
+              var i = a;
+              a = b;
+              b = i;
+          }
+          classichelper_hline(a, y, b - a, ctx);
+      }
+      sa = dx12 * (y - y1);
+      sb = dx02 * (y - y0);
+      for (; y <= y2; y++) {
+          a = x1 + sa / dy12;
+          b = x0 + sb / dy02;
+          sa += dx12;
+          sb += dx02;
+          if (a > b) {
+              var i = a;
+              a = b;
+              b = i;
+          }
+          classichelper_hline(a, y, b - a, ctx);
+      }
+  }
 }
 
 var cam = new Camera3D(1);
 var cubeMesh = new Mesh([
   // front
   new MeshTri(
-    new Point3D(-0.5,  0.5, -0.5),
-    new Point3D( 0.5,  0.5, -0.5),
-    new Point3D( 0.5, -0.5, -0.5),
+    new Vector3(-0.5,  0.5, -0.5),
+    new Vector3( 0.5,  0.5, -0.5),
+    new Vector3( 0.5, -0.5, -0.5),
     new Vector4(0,   0, 255, 255),
     new Vector4(0,   0, 255, 255)
   ),
   new MeshTri(
-    new Point3D(-0.5, -0.5, -0.5),
-    new Point3D(-0.5,  0.5, -0.5),
-    new Point3D( 0.5, -0.5, -0.5),
+    new Vector3(-0.5, -0.5, -0.5),
+    new Vector3(-0.5,  0.5, -0.5),
+    new Vector3( 0.5, -0.5, -0.5),
     new Vector4(0,   0, 255, 255),
     new Vector4(0,   0, 255, 255)
   ),
   // back
   new MeshTri(
-    new Point3D( 0.5,  0.5,  0.5),
-    new Point3D(-0.5,  0.5,  0.5),
-    new Point3D( 0.5, -0.5,  0.5),
+    new Vector3( 0.5,  0.5,  0.5),
+    new Vector3(-0.5,  0.5,  0.5),
+    new Vector3( 0.5, -0.5,  0.5),
     new Vector4(0,   0, 255, 255),
     new Vector4(0,   0, 255, 255)
   ),
   new MeshTri(
-    new Point3D(-0.5,  0.5,  0.5),
-    new Point3D(-0.5, -0.5,  0.5),
-    new Point3D( 0.5, -0.5,  0.5),
+    new Vector3(-0.5,  0.5,  0.5),
+    new Vector3(-0.5, -0.5,  0.5),
+    new Vector3( 0.5, -0.5,  0.5),
     new Vector4(0,   0, 255, 255),
     new Vector4(0,   0, 255, 255)
   ),
   // top
   new MeshTri(
-    new Point3D(-0.5,  0.5,  0.5),
-    new Point3D( 0.5,  0.5,  0.5),
-    new Point3D( 0.5,  0.5, -0.5),
+    new Vector3(-0.5,  0.5,  0.5),
+    new Vector3( 0.5,  0.5,  0.5),
+    new Vector3( 0.5,  0.5, -0.5),
     new Vector4(0,   0, 255, 255),
     new Vector4(0,   0, 255, 255)
   ),
   new MeshTri(
-    new Point3D(-0.5,  0.5, -0.5),
-    new Point3D(-0.5,  0.5,  0.5),
-    new Point3D( 0.5,  0.5, -0.5),
+    new Vector3(-0.5,  0.5, -0.5),
+    new Vector3(-0.5,  0.5,  0.5),
+    new Vector3( 0.5,  0.5, -0.5),
     new Vector4(0,   0, 255, 255),
     new Vector4(0,   0, 255, 255)
   ),
   // bottom
   new MeshTri(
-    new Point3D( 0.5, -0.5,  0.5),
-    new Point3D(-0.5, -0.5,  0.5),
-    new Point3D( 0.5, -0.5, -0.5),
+    new Vector3( 0.5, -0.5,  0.5),
+    new Vector3(-0.5, -0.5,  0.5),
+    new Vector3( 0.5, -0.5, -0.5),
     new Vector4(0,   0, 255, 255),
     new Vector4(0,   0, 255, 255)
   ),
   new MeshTri(
-    new Point3D(-0.5, -0.5,  0.5),
-    new Point3D(-0.5, -0.5, -0.5),
-    new Point3D( 0.5, -0.5, -0.5),
+    new Vector3(-0.5, -0.5,  0.5),
+    new Vector3(-0.5, -0.5, -0.5),
+    new Vector3( 0.5, -0.5, -0.5),
     new Vector4(0,   0, 255, 255),
     new Vector4(0,   0, 255, 255)
   ),
   // left
   new MeshTri(
-    new Point3D(-0.5,  0.5,  0.5),
-    new Point3D(-0.5,  0.5, -0.5),
-    new Point3D(-0.5, -0.5,  0.5),
+    new Vector3(-0.5,  0.5,  0.5),
+    new Vector3(-0.5,  0.5, -0.5),
+    new Vector3(-0.5, -0.5,  0.5),
     new Vector4(0,  64, 192, 255),
     new Vector4(0,  64, 192, 255)
   ),
   new MeshTri(
-    new Point3D(-0.5, -0.5, -0.5),
-    new Point3D(-0.5, -0.5,  0.5),
-    new Point3D(-0.5,  0.5, -0.5),
+    new Vector3(-0.5, -0.5, -0.5),
+    new Vector3(-0.5, -0.5,  0.5),
+    new Vector3(-0.5,  0.5, -0.5),
     new Vector4(0,  64, 192, 255),
     new Vector4(0,  64, 192, 255)
   ),
   // right
   new MeshTri(
-    new Point3D( 0.5,  0.5, -0.5),
-    new Point3D( 0.5,  0.5,  0.5),
-    new Point3D( 0.5, -0.5,  0.5),
+    new Vector3( 0.5,  0.5, -0.5),
+    new Vector3( 0.5,  0.5,  0.5),
+    new Vector3( 0.5, -0.5,  0.5),
     new Vector4(0,  64, 192, 255),
     new Vector4(0,  64, 192, 255)
   ),
   new MeshTri(
-    new Point3D( 0.5, -0.5,  0.5),
-    new Point3D( 0.5, -0.5, -0.5),
-    new Point3D( 0.5,  0.5, -0.5),
+    new Vector3( 0.5, -0.5,  0.5),
+    new Vector3( 0.5, -0.5, -0.5),
+    new Vector3( 0.5,  0.5, -0.5),
     new Vector4(0,  64, 192, 255),
     new Vector4(0,  64, 192, 255)
   ),
