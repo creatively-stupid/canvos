@@ -2340,7 +2340,7 @@ function textureMap(ctx, texture, pts) {
 
   // Set clipping area so that only pixels inside the triangle will
   // be affected by the image drawing operation
-  ctx.pushMatrix(); ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1);
+  ctx.save(); ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1);
   ctx.lineTo(x2, y2); ctx.closePath(); ctx.clip();
 
   // Compute matrix transform
@@ -2362,7 +2362,7 @@ function textureMap(ctx, texture, pts) {
                 delta_b/delta, delta_e/delta,
                 delta_c/delta, delta_f/delta);
   ctx.drawImage(texture, 0, 0);
-  ctx.popMatrix();
+  ctx.restore();
 }
 
 function classic_drawTri(x0, y0, x1, y1, x2, y2, ctx) {
