@@ -30,3 +30,5 @@ Submit an issue [here](https://github.com/creatively-stupid/canvos/issues/new) i
 - we have two accounts with mostly the same names, it's confusing and we're still trying to consolidate everything to one account
 
 - updates may come slowly because some of us are on vacation
+
+- we also now have canvos v3 so we're going to be working on that to make it better and also more useful
